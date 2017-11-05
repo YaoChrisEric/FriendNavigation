@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.yaohuasun.friendnavigation.CreateNewUserActivity"
+    tools:showIn="@layout/activity_create_new_user">
+
+    <Button
+        android:id="@+id/button_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="129dp" />
+
+    <EditText
+        android:id="@+id/editText_CreateEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:ems="10"
+        android:hint="type in email "
+        android:inputType="textPersonName"
+        android:layout_above="@+id/editText_CreatePassword"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/editText_CreatePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_create"
+        android:layout_alignLeft="@+id/editText_CreateEmail"
+        android:layout_alignStart="@+id/editText_CreateEmail"
+        android:layout_marginBottom="14dp"
+        android:ems="10"
+        android:hint="type in password "
+        android:inputType="textPersonName" />
+</RelativeLayout>

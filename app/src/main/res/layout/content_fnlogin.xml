@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.yaohuasun.friendnavigation.FNLoginActivity"
+    tools:showIn="@layout/activity_fnlogin">
+
+    <EditText
+        android:id="@+id/editText_loginName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="95dp"
+        android:ems="10"
+        android:hint="email address"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/editText_LoginPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/editText_loginName"
+        android:layout_alignRight="@+id/editText_loginName"
+        android:layout_below="@+id/editText_loginName"
+        android:layout_marginTop="29dp"
+        android:ems="10"
+        android:hint="password"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/button_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText_LoginPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp"
+        android:text="Login" />
+</RelativeLayout>

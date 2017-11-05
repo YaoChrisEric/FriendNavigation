@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "199643945377",
+    "firebase_url": "https://friendnavigation-ac7bb.firebaseio.com",
+    "project_id": "friendnavigation-ac7bb",
+    "storage_bucket": "friendnavigation-ac7bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199643945377:android:4cfc8f173950325c",
+        "android_client_info": {
+          "package_name": "com.example.yaohuasun.friendnavigation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "199643945377-d98h0gpkf4odcj32fqm365l95um48jkp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yaohuasun.friendnavigation",
+            "certificate_hash": "72d9e035e7a9d416e132cd2580744b0df141f21a"
+          }
+        },
+        {
+          "client_id": "199643945377-3ht4abgftt38tv9fa8beu34j204j957r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_zHJElZIVW3OSefLkrRY5NipPLTMsUnk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "199643945377-3ht4abgftt38tv9fa8beu34j204j957r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
