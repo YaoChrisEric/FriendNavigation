@@ -96,7 +96,7 @@ public class CreateNewUserActivity extends AppCompatActivity {
                 // debug Log.i("Yao", "position 0");
                 if(!TextUtils.isEmpty(userEmailString) && !TextUtils.isEmpty(userPasswordString))
                 {
-                    // debug Log.i("Yao", "position 1");
+                    Log.i("Yao", "position 1");
 
                     mFirebaseAuth.createUserWithEmailAndPassword(userEmailString,userPasswordString).
                             addOnCompleteListener(CreateNewUserActivity.this,new OnCompleteListener<AuthResult>() {
