@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:keepScreenOn="true"
-        android:text="@string/dummy_content"
+        android:text="@string/starting_nav"
         android:textColor="#33b5e5"
         android:textSize="50sp"
         android:textStyle="bold" />
@@ -33,18 +33,31 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
             android:background="@color/black_overlay"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             tools:ignore="UselessParent">
-
             <Button
-                android:id="@+id/dummy_button"
+                android:id="@+id/accept_button"
                 style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#00E676"
+                android:textColor="#33b5e5"
+                android:textSize="20sp"
+                android:layout_weight="0"
+                android:text="@string/accept_button" />
+            <Button
+                android:id="@+id/hangout_button"
+                style="?metaButtonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#EF5350"
+                android:textColor="#33b5e5"
+                android:textSize="20sp"
                 android:layout_weight="1"
-                android:text="@string/dummy_button" />
+                android:text="@string/hangout_button" />
 
         </LinearLayout>
     </FrameLayout>
+
 
 </FrameLayout>
