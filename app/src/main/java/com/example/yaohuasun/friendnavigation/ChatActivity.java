@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -208,6 +210,8 @@ public class ChatActivity extends AppCompatActivity {
         //mCurrentMeetRequest.setResponderEmailaddr("");
         //mCurrentMeetRequest.setResponderState("");
         mReceivingMeetRequest = "false";
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //setDisplayHomeAsUpEnabled(true);
     }
 
     public void sendMessage(View view){
@@ -450,5 +454,17 @@ public class ChatActivity extends AppCompatActivity {
         mMessageListAdapter.cleanup();
 
         // TODO: detach db ref listeners either here or in onDestroy (figure out)
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            // respond to up/home button to go back to parent activity
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
