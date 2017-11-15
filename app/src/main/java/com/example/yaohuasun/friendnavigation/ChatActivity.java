@@ -263,10 +263,21 @@ public class ChatActivity extends AppCompatActivity {
                             mMeetRequestMessageRef.child("initiatorEmailAddr").setValue(mCurrentUserEmail);
                             mMeetRequestMessageRef.child("responderEmailAddr").setValue(basicChatFriend);
 
-                            mUserRef.child(FNUtil.encodeEmail(basicChatFriend)).child("receivingMapRequest").setValue("true");
+                            // start the request activity
+
+                            // passing in the fact that we are the initiator, chat id, currentUserEmail
 
                             Intent intent = new Intent(ChatActivity.this,requestActivity.class);
+
+
+
+                            //intent.putExtra("ChatId",mChatId);
+                            //intent.putExtra("isInitiator","true");
+                            // the requestActivity could figure out currentUserEmail
+
+                            mUserRef.child(FNUtil.encodeEmail(basicChatFriend)).child("receivingMapRequest").setValue("true");
                             startActivity(intent);
+                            // if we wait for a while and still haven't got frind to true, the request activity should come back and set flag to false
                         }
                     }
 
@@ -278,6 +289,59 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+        /*String initiatorEmail = mCurrentMeetRequest.getInitiatorEmailAddr();
+        String initiatorState = mCurrentMeetRequest.getInitiatorState();
+        String responderEmail = mCurrentMeetRequest.getResponderEmailaddr();
+        String responderState = mCurrentMeetRequest.getResponderState();
+        Log.i("proposeNav","in attach listener, initiatorEmail is"+initiatorEmail
+                +", initiatorState is "+initiatorState +
+                ",responderEmail is "+responderEmail +
+                ",responderState is "+responderState);
+        detachNavigationRefListener();
+        if (initiatorState.equals("false"))
+        {
+            if (responderState.equals("false"))
+            {
+                // set our request flag to true (means initiator has agreed)
+                mMeetRequestMessageRef.child("initiatorState").setValue("true");
+                mMeetRequestMessageRef.child("initiatorEmailAddr").setValue(mCurrentUserEmail);
+                mMeetRequestMessageRef.child("responderEmailAddr").setValue(basicChatFriend);
+
+                // start the request activity
+
+                // passing in the fact that we are the initiator, chat id, currentUserEmail
+
+                Intent intent = new Intent(ChatActivity.this,requestActivity.class);
+
+
+
+                //intent.putExtra("ChatId",mChatId);
+                //intent.putExtra("isInitiator","true");
+                // the requestActivity could figure out currentUserEmail
+
+                mUserRef.child(FNUtil.encodeEmail(basicChatFriend)).child("receivingMapRequest").setValue("true");
+                startActivity(intent);
+                // if we wait for a while and still haven't got frind to true, the request activity should come back and set flag to false
+            }
+            else
+            {
+                // friend might already initiated nav request, just wait and do nothing else
+
+                Log.i("position911", "in proposeNavigation, maybe GUI is delaying receiving nav request from friend, wait" );
+            }
+        }
+        else {
+            Log.i("position912", "in proposeNavigation, something might be wrong" );
+            // TODO: add a panic here to see what happened, maybe we forgot to disable back button in requestActivity
+            Log.i("position9121","initiatorState is" + initiatorState);
+            //Log.i("position9122","mMeetRequestMessageRef is" + mMeetRequestMessageRef.toString());
+
+        }
+        attachNavigationRefListener();
+*/
     }
 
 
