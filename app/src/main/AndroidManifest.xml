@@ -19,35 +19,30 @@
         <activity android:name=".MainActivity">
         </activity>
         <activity
+            android:name=".ChatActivity"
+            android:label="@string/title_activity_chat"
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".CreateNewUserActivity"
             android:label="@string/title_activity_create_new_user"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".FNFriendListActivity"
             android:label="@string/title_activity_fnfriend_list"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ChatActivity"
-            android:label="@string/title_activity_chat"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".FNFriendListActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FNFriendListActivity"
-                />
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".FNLoginActivity"
             android:label="@string/title_activity_fnlogin"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".requestActivity"
+            android:launchMode="singleInstance"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_request"
             android:theme="@style/FullscreenTheme" />
@@ -65,6 +60,7 @@
 
         <activity
             android:name=".MapsActivity"
+            android:launchMode="singleInstance"
             android:label="@string/title_activity_maps"></activity>
     </application>
 
