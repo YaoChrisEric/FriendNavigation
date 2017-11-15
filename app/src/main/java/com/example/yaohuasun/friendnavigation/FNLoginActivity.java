@@ -30,8 +30,6 @@ public class FNLoginActivity extends AppCompatActivity {
     FirebaseAuth mFirebaseAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
 
-    //DatabaseReference mDatabaseRef;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +41,6 @@ public class FNLoginActivity extends AppCompatActivity {
         mUserEmailEditText = (EditText)findViewById(R.id.editText_loginName);
         mPasswordEditText = (EditText)findViewById(R.id.editText_LoginPassword);
 
-        // TODO: change the "Users" into string values defined in xml file
-        //mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("Users");
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener(){
             @Override
@@ -53,15 +49,7 @@ public class FNLoginActivity extends AppCompatActivity {
 
                 if (null != user)
                 {
-                    // TODO:search in database and see whether we could find a match
-                    Log.i("LoginonCreate","user is not null");
-
-                    // if validated in above TODO, start the friend list activity
-                    startActivity(new Intent(FNLoginActivity.this, FNFriendListActivity.class));
-                }
-                else
-                {
-                    // not signed in, do nothing for now
+                    LaunchFriendListActivity();
                 }
             }
         };
@@ -80,10 +68,7 @@ public class FNLoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful())
                             {
-                                //mDatabaseRef.addValueEventListener();
-                                // TODO: perform validation of the user
-                                // if validated in above TODO, start the friend list activity
-                                startActivity(new Intent(FNLoginActivity.this, FNFriendListActivity.class));
+                                LaunchFriendListActivity();
                             }
                             else
                             {
@@ -92,19 +77,8 @@ public class FNLoginActivity extends AppCompatActivity {
                         }
                     });
                 }
-
-
-
             }
         });
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
 
     @Override
@@ -119,4 +93,9 @@ public class FNLoginActivity extends AppCompatActivity {
         mFirebaseAuth.removeAuthStateListener(mAuthListener);
     }
 
+    private void LaunchFriendListActivity() {
+        Intent intent = new Intent(FNLoginActivity.this, FNFriendListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,11 +36,12 @@ public class FNFriendListActivity extends AppCompatActivity {
 
     private Toast mToast;
 
-
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseFriendMapRef;
-    //private DatabaseReference mDatabaseFriendMapCurrentChatRef;
+
     private FirebaseRecyclerAdapter mAdapter;
+
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     private DatabaseReference mDatabaseUserRef;
 
@@ -49,17 +52,18 @@ public class FNFriendListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mAuthListener = new FirebaseAuth.AuthStateListener(){
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
+                    Intent intent = new Intent(FNFriendListActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
             }
-        });*/
+        };
 
-        // we will create a displayUsers() for now to test Recycler view
-        // TODO: after displayUsers is done, and AddFriend() is done, remove displayUsers() and replayce with displayFriends()
         displayUserList();
     }
 
@@ -94,7 +98,7 @@ public class FNFriendListActivity extends AppCompatActivity {
         String currentUserEmail1 = mFirebaseAuth.getCurrentUser().getEmail().trim();
 
         mDatabaseFriendMapRef = mFirebaseDatabase.getReference().child("FriendMap").child(FNUtil.encodeEmail(currentUserEmail1)).child("FriendList");
-        //mDatabaseFriendMapCurrentChatRef = mFirebaseDatabase.getReference().child("FriendMap").child(FNUtil.encodeEmail(currentUserEmail1)).child("currentChat");
+
         Log.i("positionB", "value for ref is " + mDatabaseFriendMapRef.toString());
 
         mDatabaseUserRef = mFirebaseDatabase.getReference().child("Users").child(FNUtil.encodeEmail(currentUserEmail1));
@@ -114,26 +118,7 @@ public class FNFriendListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Toast.makeText(FNFriendListActivity.this,"you clicked on item "+ Integer.toString(position), Toast.LENGTH_LONG).show();
-                        // TODO: create a basic chat entry and start the chat activity; 'fore creating it, first check whether the other party created it
-                        // if so, capture the chat-id and use the same chat
                         Intent intent = new Intent(view.getContext(),ChatActivity.class);
-                        // TODO: make a constant for string "friendEmailAddr"
-                        //intent.putExtra("friendEmailAddr",friend.getFriendEmailAddr());
-
-                        //SharedPreferences friendPref = getSharedPreferences("friendEmailAddr",MODE_PRIVATE);
-                        //SharedPreferences.Editor friendPrefEdit = friendPref.edit();
-
-                        //friendPrefEdit.putString("friendEmailAddr",friend.getFriendEmailAddr());
-
-
-                        // we add a child under the unser entry of current user, with name
-                        // currentBasicChatId, then in the chat activity we find it and find basicChatFriend
-
-
-
-                        // TODO: find a potentially better way (from calling intent) to figure out calling activity
-                        //intent.putExtra("callingActivity", "friendListActivity");
-                        //mDatabaseFriendMapCurrentChatRef.setValue(friend.getFriendEmailAddr());
 
                         mDatabaseUserRef.child("currentChatFriend").setValue(friend.getFriendEmailAddr());
 
@@ -162,10 +147,6 @@ public class FNFriendListActivity extends AppCompatActivity {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        // we have found an entry that matches it, use it
-                        // TODO: while user is typing, autocomplete from firebase
-                        // add this entry to the friend list in corresponding Friend Map Entry
-
 
                         FirebaseAuth mFirebaseAuth = FirebaseAuth.getInstance();
                         Log.i("position4", "in onDataChange, current user email is"+ mFirebaseAuth.getCurrentUser().getEmail());
@@ -192,10 +173,6 @@ public class FNFriendListActivity extends AppCompatActivity {
                             UserModel user = dataSnapshot.child(FNUtil.encodeEmail(mUserInputEmailString)).getValue(UserModel.class);
                             if (null != user) {
                                 String useremail = user.getEmailAddr();
-
-                                //String useremail = dataSnapshot.child("emailAddr").getValue().toString();
-                                //DatabaseReference mSnapShotRef = dataSnapshot.getRef();
-                                //String useremail = mSnapShotRef.push().;
 
                                 Log.i("position7", "in OnDataChange, emailAddr Value is" + useremail);
                                 try {

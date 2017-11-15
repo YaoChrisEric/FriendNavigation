@@ -53,13 +53,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private MeetLocationModel mCurrentFriendsLocation;
 
-
-
-    //mChatId = intent.getStringExtra("ChatId");
-    //mIsCallingActivityInitiator = intent.getStringExtra("isInitiator");
-
-
-
     // first task, display current location on map
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +87,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     {
                         otherPartyLocationMarker.remove();
                     }
-
 
                     mCurrentFriendsLocation = dataSnapshot.getValue(MeetLocationModel.class);
                     String initiatorLatitude = mCurrentFriendsLocation.getInitiatorLatitude();

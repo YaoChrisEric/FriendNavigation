@@ -31,11 +31,8 @@ public class CreateNewUserActivity extends AppCompatActivity {
     EditText mCreatePasswordEditText;
 
     FirebaseAuth mFirebaseAuth;
-    FirebaseAuth.AuthStateListener mAuthListener;
 
     DatabaseReference mDatabaseRef, mUserCheckData;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,108 +49,59 @@ public class CreateNewUserActivity extends AppCompatActivity {
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
         mUserCheckData = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-
-                if (user != null) {
-
-                    final String emailForVer = user.getEmail();
-
-                    mUserCheckData.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            // validate user
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-                } else {
-
-
-                }
-
-
-            }
-        };
-
         mCreateButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 final String userEmailString, userPasswordString;
                 userEmailString = mCreateEmailEditText.getText().toString().trim();
                 userPasswordString = mCreatePasswordEditText.getText().toString().trim();
-                //userEmailString = "testnow@gmail.com";
-                //userPasswordString = "testaabbccdd";
-                // debug Log.i("Yao", "position 0");
+
                 if(!TextUtils.isEmpty(userEmailString) && !TextUtils.isEmpty(userPasswordString))
                 {
                     Log.i("Yao", "position 1");
 
                     mFirebaseAuth.createUserWithEmailAndPassword(userEmailString,userPasswordString).
-                            addOnCompleteListener(CreateNewUserActivity.this,new OnCompleteListener<AuthResult>() {
+                            addOnCompleteListener(CreateNewUserActivity.this, new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if(task.isSuccessful()){
                                                 Log.i("Yao", "position 2");
                                                 // remove .push
                                                 DatabaseReference mNewUser = mDatabaseRef.child("Users").child(FNUtil.encodeEmail(userEmailString));
-                                                //String newUserKey = mNewUser.getKey();
 
-                                                //mNewUser.child("userKey").setValue(newUserKey);
                                                 mNewUser.child("emailAddr").setValue(userEmailString);
                                                 mNewUser.child("passwordForLogin").setValue(userPasswordString);
                                                 mNewUser.child("receivingMapRequest").setValue("false");
                                                 mNewUser.child("currentChatFriend").setValue("");
 
                                                 Toast.makeText(CreateNewUserActivity.this, "Successfully created account", Toast.LENGTH_LONG).show();
-                                                // move to login activity
-                                                startActivity(new Intent(CreateNewUserActivity.this,FNLoginActivity.class));
+
+                                                Intent intent = new Intent(CreateNewUserActivity.this, FNFriendListActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(intent);
                                             }else{
                                                 // debug Log.i("Yao", "position 3");
                                                 Toast.makeText(CreateNewUserActivity.this, "Failed to create account", Toast.LENGTH_LONG).show();
                                             }
                                         }
                                     }
-
                             );
                 }
                 else{
-                    // debug Log.i("Yao", "position r");
                     Toast.makeText(CreateNewUserActivity.this, "empty user name or password", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mFirebaseAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mFirebaseAuth.removeAuthStateListener(mAuthListener);
     }
 
 }
