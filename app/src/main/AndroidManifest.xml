@@ -24,10 +24,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ChatActivity"
-            android:label="@string/title_activity_chat"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".CreateNewUserActivity"
             android:label="@string/title_activity_create_new_user"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -35,6 +31,16 @@
             android:name=".FNFriendListActivity"
             android:label="@string/title_activity_fnfriend_list"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/title_activity_chat"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".FNFriendListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+              android:value=".FNFriendListActivity"
+               />
+        </activity>
         <activity
             android:name=".FNLoginActivity"
             android:label="@string/title_activity_fnlogin"
