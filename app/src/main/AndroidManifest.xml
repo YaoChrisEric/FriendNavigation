@@ -46,7 +46,7 @@
             android:label="@string/title_activity_fnlogin"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".requestActivity"
+            android:name=".RequestActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_request"
             android:theme="@style/FullscreenTheme" />

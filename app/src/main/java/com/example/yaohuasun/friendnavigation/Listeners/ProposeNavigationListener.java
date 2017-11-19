@@ -1,14 +1,8 @@
 package com.example.yaohuasun.friendnavigation.Listeners;
 
-import android.content.Context;
-import android.content.Intent;
-import android.provider.ContactsContract;
-import android.util.Log;
-
 import com.example.yaohuasun.friendnavigation.ChatActivity;
 import com.example.yaohuasun.friendnavigation.Models.UserModel;
 import com.example.yaohuasun.friendnavigation.Utils.FNUtil;
-import com.example.yaohuasun.friendnavigation.requestActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

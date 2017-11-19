@@ -1,33 +1,24 @@
 package com.example.yaohuasun.friendnavigation;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
+import com.example.yaohuasun.friendnavigation.Listeners.RequestActivity.UserRefListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.example.yaohuasun.friendnavigation.Models.MeetRequestModel;
-import com.example.yaohuasun.friendnavigation.Models.UserModel;
 import com.example.yaohuasun.friendnavigation.Utils.FNUtil;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class requestActivity extends AppCompatActivity {
+public class RequestActivity extends AppCompatActivity {
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mBasicChatRef;
@@ -51,6 +42,7 @@ public class requestActivity extends AppCompatActivity {
     private View mContentView;
 
     private MeetRequestModel mCurrentMeetRequest;
+    private UserRefListener userRefListener;
 
     private String basicChatFriend;
     private String mReceivingMeetRequest;
@@ -103,102 +95,10 @@ public class requestActivity extends AppCompatActivity {
 
         //the basic chat friend still should be put into shared preferences in chat activity
 
-        mUserRef.orderByChild("emailAddr").equalTo(mCurrentUserEmail).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (null!= dataSnapshot.getValue()){
-                    Log.i("position1010", "in OnDataChange, dataSnapShot Value is" + dataSnapshot.getValue().toString());
-                    UserModel user = dataSnapshot.child(FNUtil.encodeEmail(mCurrentUserEmail)).getValue(UserModel.class);
-                    if (user != null) {
-                        basicChatFriend = user.getCurrentChatFriend();
-                        Log.i("position1002", "basicChatFriend is" + basicChatFriend);
-                        mChatId = FNUtil.generateIDWithTwoEmails(mCurrentUserEmail, basicChatFriend );
-                        mBasicChatRef = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId);
-                        mMeetRequestReference = mBasicChatRef.child("meetRequest");
-                        // mMeetRequestMessageRef = mBasicChatDatabaseRef.child(mChatId).child("meetRequest");
-                        mReceivingMeetRequest = user.getReceivingMapRequest();
-                        if(mReceivingMeetRequest.equals("false")){
-                            // the caller doesn't need the accept bubton
-                            mAcceptBtn.setVisibility(View.INVISIBLE);
-                            mIsCallingActivityInitiator = true;
-                            // need to add a listener to the responder state, when true , open the map activity,
-                            // remove the listener below
-
-                            // attach value event listener to the meetrequest reference
-                            mMeetRequestRefListener = mMeetRequestReference.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if(dataSnapshot.exists()) {
-                                        Log.i("position09191", "in reqActivity, dataSnapShot is " + dataSnapshot.toString());
-
-                                        mCurrentMeetRequest = dataSnapshot.getValue(MeetRequestModel.class);
-                                        String initiatorEmail = mCurrentMeetRequest.getInitiatorEmailAddr();
-                                        String initiatorState = mCurrentMeetRequest.getInitiatorState();
-                                        String responderEmail = mCurrentMeetRequest.getResponderEmailaddr();
-                                        String responderState = mCurrentMeetRequest.getResponderState();
-                                        if (responderState.equals("true")){
-                                            if (!initiatorState.equals("true")){
-                                                Log.i("DEAD11", "unExpected situation,wrong, initiatorEmail is" + initiatorEmail + "initiatorState is"+initiatorState);
-                                            }
-
-                                            Intent intent = new Intent(requestActivity.this,MapsActivity.class);
-                                            //intent.putExtra("ChatId",mChatId);
-                                            //intent.putExtra("isInitiator",mIsCallingActivityInitiator);
-
-                                            // these extra info could be found in maps activity
-                                            // and start the MapsActivity
-                                            intent.putExtra("ChatId", mChatId);
-                                            intent.putExtra("isInitiator", "true");
-                                            startActivity(intent);
-                                            finish();
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
-                        else
-                        {
-                            mIsCallingActivityInitiator = false;
-                            Log.i("requestActivity01"," mIsCallingActivityInitiator is "+ mIsCallingActivityInitiator);
-                            mAcceptBtn.setVisibility(View.VISIBLE);
-                            mAcceptBtn.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    // we will modify the responderState to be true
-                                    mMeetRequestReference.child("responderState").setValue("true");
-                                    // TODO: pass in ChatId and isinitiator to map activity
-
-                                    Intent intent = new Intent(requestActivity.this,MapsActivity.class);
-
-                                    //SharedPreferences ChatIdPref = getSharedPreferences("Chat",MODE_PRIVATE);
-                                    //basicChatFriend = friendPref.getString("friendEmailAddr","defaultValue");
-                                    //boolean isInitiator = ChatIdPref.getBoolean("isInitiator",false);
-                                    //String currentChatId = ChatIdPref.getString("ChatId","defaultValue");
-
-                                    //Toast.makeText(requestActivity.this, "chatId (debug)"+ currentChatId, Toast.LENGTH_SHORT).show();
-
-                                    // and start the MapsActivity
-                                    intent.putExtra("ChatId", mChatId);
-                                    intent.putExtra("isInitiator", "false");
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        userRefListener = new UserRefListener(mFirebaseDatabase, this, mBasicChatRef, mAcceptBtn, mCurrentUserEmail);
+        mUserRef.orderByChild("emailAddr").equalTo(mCurrentUserEmail).addListenerForSingleValueEvent(
+                userRefListener
+        );
 
 
 
@@ -225,10 +125,6 @@ public class requestActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
         // TODO we will need to start a timer of 10 sec and beeping and timeout if user doesn't accpet and go back to ChatActivity
         // similar to hangout button handler
 
@@ -250,10 +146,6 @@ public class requestActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);*/
-
-
-
-
     }
 /*
     @Override
@@ -315,7 +207,7 @@ public class requestActivity extends AppCompatActivity {
         // TODO: do the cleanup in onPause and onDestroy in every activity
         if (null!= mMeetRequestRefListener)
         {
-            mMeetRequestReference.removeEventListener(mMeetRequestRefListener);
+            mMeetRequestReference.removeEventListener(userRefListener.getMeetRequestRefListener());
             mMeetRequestRefListener = null;
         }
     }
@@ -325,8 +217,21 @@ public class requestActivity extends AppCompatActivity {
         super.onDestroy();
         if (null!= mMeetRequestRefListener)
         {
-            mMeetRequestReference.removeEventListener(mMeetRequestRefListener);
+            mMeetRequestReference.removeEventListener(userRefListener.getMeetRequestRefListener());
             mMeetRequestRefListener = null;
         }
+    }
+
+    public void navigateToStartActivity(String isInitiator) {
+        Intent intent = new Intent(RequestActivity.this,MapsActivity.class);
+        //intent.putExtra("ChatId",mChatId);
+        //intent.putExtra("isInitiator",mIsCallingActivityInitiator);
+
+        // these extra info could be found in maps activity
+        // and start the MapsActivity
+        intent.putExtra("ChatId", mChatId);
+        intent.putExtra("isInitiator", isInitiator);
+        startActivity(intent);
+        finish();
     }
 }

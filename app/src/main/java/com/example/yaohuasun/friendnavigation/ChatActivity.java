@@ -174,7 +174,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void NavigateToRequestActivity() {
-        Intent intent = new Intent(ChatActivity.this, requestActivity.class);
+        Intent intent = new Intent(ChatActivity.this, RequestActivity.class);
         startActivity(intent);
     }
 
