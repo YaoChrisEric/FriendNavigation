@@ -107,7 +107,7 @@ public class FNFriendListActivity extends AppCompatActivity {
         final String mUserInputEmailString = mUserInputEmailEdit.getText().toString().trim();
 
         mUsers.orderByChild("emailAddr").equalTo(mUserInputEmailString).addListenerForSingleValueEvent(
-                new SearchAndAddNewFriendListner(mUserInputEmailString, FNFriendListActivity.this, mFirebaseDatabase)
+                new SearchAndAddNewFriendListner(mCurrentUser.getEmail(), mUserInputEmailString, FNFriendListActivity.this, mFirebaseDatabase)
         );
     }
 

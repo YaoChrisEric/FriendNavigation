@@ -87,9 +87,6 @@ public class ChatActivity extends AppCompatActivity {
             new CreateChatListener(mBasicChatDatabaseRef, mCurrentUserEmail, this)
         );
 
-        detachNavigationRefListener();
-        attachNavigationRefListener();
-
         mReceivingMeetRequest = "false";
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -115,33 +112,27 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void sendMessage(View view){
-        /*mMessageField = (TextView)findViewById(R.id.messageToSend);
+
+       if (mMessageDataBaseReference == null) {
+            return;
+        }
+
+        mMessageField = (TextView)findViewById(R.id.messageToSend);
         final DatabaseReference pushRef = mMessageDataBaseReference.push();
         final String pushKey = pushRef.getKey();
 
         String messageString = mMessageField.getText().toString();
+        mMessageField.setText("");
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         Date date = new Date();
         String timestamp = dateFormat.format(date);
 
         MessageModel message = new MessageModel(mCurrentUserEmail,messageString,timestamp);
-        HashMap<String, Object> messageItemMap = new HashMap<String, Object>();
-        HashMap<String,Object> messageObj = new HashMap<String, Object>();
-        messageObj.put()
-        messageObj.
-        HashMap<String,Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
-                .convertValue(message, Map.class);
-        messageItemMap.put("/" + pushKey, messageObj);
 
-        mMessageDataBaseReference.updateChildren(messageItemMap)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        mMessageField.setText("");
-                    }
-                });*/
-
+        mMessageDataBaseReference
+                .push()
+                .setValue(message);
     }
 
     public void proposeNavigation(View view){
@@ -177,6 +168,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void SetupChatAdapter(DatabaseReference databaseReference) {
+        mMessageDataBaseReference = databaseReference;
         mMessageListAdapter = CreateChatAdapter(databaseReference);
         mMessageList.setAdapter(mMessageListAdapter);
     }
@@ -186,12 +178,18 @@ public class ChatActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void setCurrentUser(UserModel user) {
+        mUser = user;
+    }
+
     public void setCurrentMeetRequest(MeetRequestModel currentMeetRequest) {
         mCurrentMeetRequest = currentMeetRequest;
     }
 
     public void setMeetRequestMessageRef(DatabaseReference databaseReference) {
         mMeetRequestMessageRef = databaseReference;
+        detachNavigationRefListener();
+        attachNavigationRefListener();
     }
 
     private FirebaseListAdapter<MessageModel> CreateChatAdapter(DatabaseReference databaseReference) {

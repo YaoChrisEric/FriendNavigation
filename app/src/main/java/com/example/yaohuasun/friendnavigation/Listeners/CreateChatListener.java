@@ -39,55 +39,59 @@ public class CreateChatListener implements ValueEventListener {
     }
 
     public void onDataChange(DataSnapshot dataSnapshot) {
+
         if (dataSnapshot.getValue() == null) {
             return;
         }
 
         UserModel user = dataSnapshot.child(FNUtil.encodeEmail(mCurrentUserEmail)).getValue(UserModel.class);
 
-        if (user != null) {
-            return;
-        }
-
         String basicChatFriend = user.getCurrentChatFriend();
-        String mChatId = FNUtil.generateIDWithTwoEmails(mCurrentUserEmail, basicChatFriend );
-        DatabaseReference mMeetRequestMessageRef = mBasicChatDatabaseRef.child(mChatId).child("meetRequest");
-        String mReceivingMeetRequest = user.getReceivingMapRequest();
+        String chatId = FNUtil.generateIDWithTwoEmails(mCurrentUserEmail, basicChatFriend );
+        DatabaseReference mMeetRequestMessageRef = mBasicChatDatabaseRef.child(chatId).child("meetRequest");
 
-        if (mCurrentUserEmail.compareTo(basicChatFriend) > 0)
-        {
-            mBasicChatDatabaseRef.child(mChatId).child("User1EmailAddr").setValue(mCurrentUserEmail);
-            mBasicChatDatabaseRef.child(mChatId).child("User2EmailAddr").setValue(basicChatFriend);
-        }
-        else
-        {
-            mBasicChatDatabaseRef.child(mChatId).child("User2EmailAddr").setValue(mCurrentUserEmail);
-            mBasicChatDatabaseRef.child(mChatId).child("User1EmailAddr").setValue(basicChatFriend);
-        }
+        SetupChat(chatId, user, basicChatFriend);
 
-        mBasicChatDatabaseRef.child(mChatId).child("chatId").setValue(mChatId);
-
-        if (mReceivingMeetRequest.equals("false")) {
-
-            mBasicChatDatabaseRef.child(mChatId).child("meetRequest").child("initiatorEmailAddr").setValue("");
-            mBasicChatDatabaseRef.child(mChatId).child("meetRequest").child("responderEmailAddr").setValue("");
-
-            mBasicChatDatabaseRef.child(mChatId).child("meetRequest").child("initiatorState").setValue("false");
-            mBasicChatDatabaseRef.child(mChatId).child("meetRequest").child("responderState").setValue("false");
-
-            mBasicChatDatabaseRef.child(mChatId).child("MeetLocation").child("InitiatorLatitude").setValue("400");
-            mBasicChatDatabaseRef.child(mChatId).child("MeetLocation").child("InitiatorLongitude").setValue("400");
-
-            mBasicChatDatabaseRef.child(mChatId).child("MeetLocation").child("ResponderLatitude").setValue("400");
-            mBasicChatDatabaseRef.child(mChatId).child("MeetLocation").child("ResponderLongitude").setValue("400");
-        }
-
+        mActvity.setCurrentUser(user);
         mActvity.setMeetRequestMessageRef(mMeetRequestMessageRef);
-        mActvity.SetupChatAdapter(mBasicChatDatabaseRef.child(mChatId).child(Constants.BASIC_CHAT_MESSAGE_IDS));
+        mActvity.SetupChatAdapter(mBasicChatDatabaseRef.child(chatId).child(Constants.BASIC_CHAT_MESSAGE_IDS));
     }
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
 
+    }
+
+    private void SetupChat(String chatId, UserModel user, String basicChatFriend) {
+
+        String mReceivingMeetRequest = user.getReceivingMapRequest();
+
+        if (mCurrentUserEmail.compareTo(basicChatFriend) > 0)
+        {
+            mBasicChatDatabaseRef.child(chatId).child("User1EmailAddr").setValue(mCurrentUserEmail);
+            mBasicChatDatabaseRef.child(chatId).child("User2EmailAddr").setValue(basicChatFriend);
+        }
+        else
+        {
+            mBasicChatDatabaseRef.child(chatId).child("User2EmailAddr").setValue(mCurrentUserEmail);
+            mBasicChatDatabaseRef.child(chatId).child("User1EmailAddr").setValue(basicChatFriend);
+        }
+
+        mBasicChatDatabaseRef.child(chatId).child("chatId").setValue(chatId);
+
+        if (mReceivingMeetRequest.equals("false")) {
+
+            mBasicChatDatabaseRef.child(chatId).child("meetRequest").child("initiatorEmailAddr").setValue("");
+            mBasicChatDatabaseRef.child(chatId).child("meetRequest").child("responderEmailAddr").setValue("");
+
+            mBasicChatDatabaseRef.child(chatId).child("meetRequest").child("initiatorState").setValue("false");
+            mBasicChatDatabaseRef.child(chatId).child("meetRequest").child("responderState").setValue("false");
+
+            mBasicChatDatabaseRef.child(chatId).child("MeetLocation").child("InitiatorLatitude").setValue("400");
+            mBasicChatDatabaseRef.child(chatId).child("MeetLocation").child("InitiatorLongitude").setValue("400");
+
+            mBasicChatDatabaseRef.child(chatId).child("MeetLocation").child("ResponderLatitude").setValue("400");
+            mBasicChatDatabaseRef.child(chatId).child("MeetLocation").child("ResponderLongitude").setValue("400");
+        }
     }
 }

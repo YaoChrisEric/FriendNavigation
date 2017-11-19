@@ -20,23 +20,29 @@ import com.google.firebase.database.ValueEventListener;
 
 public class SearchAndAddNewFriendListner implements ValueEventListener {
 
-    private String mUserEmail;
+    private String mCurrentUserEmail;
+    private String mSearchUserEmail;
     private Context mContext;
     private FirebaseDatabase mFirebaseDatabase;
 
     public SearchAndAddNewFriendListner(String userEmail,
+                                        String searchUserEmail,
                                         Context context,
                                         FirebaseDatabase firebaseDatabase
                               )  {
         mContext = context;
-        mUserEmail = userEmail;
+        mCurrentUserEmail = userEmail;
+        mSearchUserEmail = searchUserEmail;
         mFirebaseDatabase = firebaseDatabase;
     }
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
 
-        DatabaseReference mFriendMapRef = mFirebaseDatabase.getReference().child("FriendMap").child(FNUtil.encodeEmail(mUserEmail));
+        String encodedUserEmail = FNUtil.encodeEmail(mCurrentUserEmail);
+        String encodedSearchUserEmail = FNUtil.encodeEmail(mSearchUserEmail);
+
+        DatabaseReference mFriendMapRef = mFirebaseDatabase.getReference().child("FriendMap").child(encodedUserEmail);
 
         if ((null == mFriendMapRef) && (dataSnapshot.getValue() == null)){
             Toast.makeText(mContext,"sure user existed? perhaps not", Toast.LENGTH_LONG).show();
@@ -44,7 +50,7 @@ public class SearchAndAddNewFriendListner implements ValueEventListener {
         }
 
         try {
-            mFriendMapRef.child("mainUserEmail").setValue(mUserEmail);
+            mFriendMapRef.child("mainUserEmail").setValue(mCurrentUserEmail);
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -52,7 +58,7 @@ public class SearchAndAddNewFriendListner implements ValueEventListener {
 
         DatabaseReference mFriendListRef = mFriendMapRef.child("FriendList").push();
 
-        UserModel user = dataSnapshot.child(FNUtil.encodeEmail(mUserEmail)).getValue(UserModel.class);
+        UserModel user = dataSnapshot.child(encodedSearchUserEmail).getValue(UserModel.class);
 
         if (user == null) {
             Toast.makeText(mContext,"perhaps user doesn't exist!", Toast.LENGTH_LONG).show();
