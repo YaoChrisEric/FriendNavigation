@@ -20,7 +20,7 @@ import com.google.firebase.database.ValueEventListener;
  * Created by yaohuasun on 11/19/17.
  */
 
-public class NewUserRegistrationListener implements OnCompleteListener
+public class NewUserRegistrationListener implements OnCompleteListener<AuthResult>
 {
     private DatabaseReference mDatabaseRef;
     private String mUserEmailString;
@@ -39,7 +39,7 @@ public class NewUserRegistrationListener implements OnCompleteListener
     }
 
     @Override
-    public void onComplete(@NonNull Task task) {
+    public void onComplete(@NonNull Task<AuthResult> task) {
         if(task.isSuccessful()){
             DatabaseReference mNewUser = mDatabaseRef.child("Users").child(FNUtil.encodeEmail(mUserEmailString));
             mNewUser.child("emailAddr").setValue(mUserEmailString);
