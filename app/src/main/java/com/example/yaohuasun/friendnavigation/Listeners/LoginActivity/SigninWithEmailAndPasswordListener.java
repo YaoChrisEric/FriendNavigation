@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.yaohuasun.friendnavigation.FNFriendListActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 
 import static android.support.v4.content.ContextCompat.startActivity;
 
@@ -15,7 +16,7 @@ import static android.support.v4.content.ContextCompat.startActivity;
  * Created by unger on 11/19/2017.
  */
 
-public class SigninWithEmailAndPasswordListener implements OnCompleteListener{
+public class SigninWithEmailAndPasswordListener implements OnCompleteListener<AuthResult>{
     private Context mContext;
 
     public SigninWithEmailAndPasswordListener(Context context) {
@@ -23,7 +24,7 @@ public class SigninWithEmailAndPasswordListener implements OnCompleteListener{
     }
 
     @Override
-    public void onComplete(@NonNull Task task) {
+    public void onComplete(@NonNull Task<AuthResult> task) {
         if(task.isSuccessful())
         {
             //mDatabaseRef.addValueEventListener();
