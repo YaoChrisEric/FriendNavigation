@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.yaohuasun.friendnavigation.Listeners.NewUserRegistrationListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -32,10 +33,7 @@ public class CreateNewUserActivity extends AppCompatActivity {
 
     FirebaseAuth mFirebaseAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
-
-    DatabaseReference mDatabaseRef, mUserCheckData;
-
-
+    DatabaseReference mDatabaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,40 +48,8 @@ public class CreateNewUserActivity extends AppCompatActivity {
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
-        mUserCheckData = FirebaseDatabase.getInstance().getReference().child("Users");
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-
-                if (user != null) {
-
-                    final String emailForVer = user.getEmail();
-
-                    mUserCheckData.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            // validate user
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-                } else {
 
 
-                }
-
-
-            }
-        };
 
         mCreateButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -91,40 +57,18 @@ public class CreateNewUserActivity extends AppCompatActivity {
                 final String userEmailString, userPasswordString;
                 userEmailString = mCreateEmailEditText.getText().toString().trim();
                 userPasswordString = mCreatePasswordEditText.getText().toString().trim();
-                //userEmailString = "testnow@gmail.com";
-                //userPasswordString = "testaabbccdd";
-                // debug Log.i("Yao", "position 0");
+
                 if(!TextUtils.isEmpty(userEmailString) && !TextUtils.isEmpty(userPasswordString))
                 {
-                    Log.i("Yao", "position 1");
 
-                    mFirebaseAuth.createUserWithEmailAndPassword(userEmailString,userPasswordString).
-                            addOnCompleteListener(CreateNewUserActivity.this,new OnCompleteListener<AuthResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<AuthResult> task) {
-                                            if(task.isSuccessful()){
-                                                Log.i("Yao", "position 2");
-                                                // remove .push
-                                                DatabaseReference mNewUser = mDatabaseRef.child("Users").child(FNUtil.encodeEmail(userEmailString));
-                                                //String newUserKey = mNewUser.getKey();
+                    NewUserRegistrationListener userRegistrationListener;
+                    userRegistrationListener = new NewUserRegistrationListener(mDatabaseRef,userEmailString,userPasswordString,
+                            CreateNewUserActivity.this);
+                        mFirebaseAuth.createUserWithEmailAndPassword(userEmailString, userPasswordString).
+                                addOnCompleteListener(CreateNewUserActivity.this,userRegistrationListener);
+                    // should finish this activity at this point
+                    finish();
 
-                                                //mNewUser.child("userKey").setValue(newUserKey);
-                                                mNewUser.child("emailAddr").setValue(userEmailString);
-                                                mNewUser.child("passwordForLogin").setValue(userPasswordString);
-                                                mNewUser.child("receivingMapRequest").setValue("false");
-                                                mNewUser.child("currentChatFriend").setValue("");
-
-                                                Toast.makeText(CreateNewUserActivity.this, "Successfully created account", Toast.LENGTH_LONG).show();
-                                                // move to login activity
-                                                startActivity(new Intent(CreateNewUserActivity.this,FNLoginActivity.class));
-                                            }else{
-                                                // debug Log.i("Yao", "position 3");
-                                                Toast.makeText(CreateNewUserActivity.this, "Failed to create account", Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    }
-
-                            );
                 }
                 else{
                     // debug Log.i("Yao", "position r");
@@ -134,26 +78,16 @@ public class CreateNewUserActivity extends AppCompatActivity {
             }
         });
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mFirebaseAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mFirebaseAuth.removeAuthStateListener(mAuthListener);
     }
 
 }

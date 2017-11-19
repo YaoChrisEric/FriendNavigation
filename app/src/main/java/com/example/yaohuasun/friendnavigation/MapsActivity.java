@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.yaohuasun.friendnavigation.Listeners.FriendMapLocationListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -54,12 +55,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private MeetLocationModel mCurrentFriendsLocation;
 
 
-
-    //mChatId = intent.getStringExtra("ChatId");
-    //mIsCallingActivityInitiator = intent.getStringExtra("isInitiator");
-
-
-
     // first task, display current location on map
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,63 +74,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         mMeetLocationsReference = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId).child("MeetLocation");
-
         //add a listener for the location for basic chat, if changed, then update map markers
-        //mMeetRequestRefListener = mMeetRequestReference.addValueEventListener
-        mMeetLocationsRefListener = mMeetLocationsReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    Log.i("position1023001", "in MapsActivity, dataSnapShot is " + dataSnapshot.toString());
-                    // we had some problem retrieving the whole MeetRequestModel, so we use another method
-                    // to get the mCurrentMeetRequest instead
-
-                    if(otherPartyLocationMarker != null)
-                    {
-                        otherPartyLocationMarker.remove();
-                    }
+        mMeetLocationsReference.addValueEventListener( new FriendMapLocationListener(otherPartyLocationMarker,
+                mCurrentFriendsLocation,
+                mIsCallingActivityInitiator,
+                mMap
+        ));
 
 
-                    mCurrentFriendsLocation = dataSnapshot.getValue(MeetLocationModel.class);
-                    String initiatorLatitude = mCurrentFriendsLocation.getInitiatorLatitude();
-                    String initiatorLongitude = mCurrentFriendsLocation.getInitiatorLongitude();
-                    String responderLatitude = mCurrentFriendsLocation.getResponderLatitude();
-                    String responderLongitude = mCurrentFriendsLocation.getResponderLongitude();
-                    Log.i("position1023002", "in MapsActivity, initiatorLatitude is "+ initiatorLatitude+", initiatorLongitude is "+
-                            initiatorLongitude+ ", responderLongitude is "+responderLongitude + ",responder latitude is "+responderLatitude);
-
-                    LatLng latLng;
-                    double otherPartyLatitude;
-                    double otherPartyLongitude;
-                    if (mIsCallingActivityInitiator.equals("true")){
-                        // we are initiator, only need to create a marker for responder
-                        otherPartyLatitude = Double.parseDouble(responderLatitude);
-                        otherPartyLongitude = Double.parseDouble(responderLongitude);
-                        latLng = new LatLng(otherPartyLatitude,otherPartyLongitude);
-                    }
-                    else{
-                        // we are responder, only need to create a marker for initiator
-                        otherPartyLatitude = Double.parseDouble(initiatorLatitude);
-                        otherPartyLongitude = Double.parseDouble(initiatorLongitude);
-                        latLng = new LatLng(otherPartyLatitude,otherPartyLongitude);
-                    }
-
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(latLng);
-                    markerOptions.title("other Party Location");
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-
-
-                    otherPartyLocationMarker = mMap.addMarker(markerOptions);
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         //basic chat needs new location
     }
 
