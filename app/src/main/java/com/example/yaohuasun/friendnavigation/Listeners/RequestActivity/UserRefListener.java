@@ -51,13 +51,16 @@ public class UserRefListener implements ValueEventListener{
             Log.i("position1010", "in OnDataChange, dataSnapShot Value is" + dataSnapshot.getValue().toString());
             UserModel user = dataSnapshot.child(FNUtil.encodeEmail(mCurrentUserEmail)).getValue(UserModel.class);
             if (user != null) {
+
                 basicChatFriend = user.getCurrentChatFriend();
                 Log.i("position1002", "basicChatFriend is" + basicChatFriend);
                 mChatId = FNUtil.generateIDWithTwoEmails(mCurrentUserEmail, basicChatFriend );
                 mBasicChatRef = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId);
                 mMeetRequestReference = mBasicChatRef.child("meetRequest");
+                mRequestActivity.updateMeetRequestReference(user, mMeetRequestReference, basicChatFriend);
                 // mMeetRequestMessageRef = mBasicChatDatabaseRef.child(mChatId).child("meetRequest");
                 mReceivingMeetRequest = user.getReceivingMapRequest();
+
                 if(mReceivingMeetRequest.equals("false")){
                     // the caller doesn't need the accept bubton
                     mAcceptBtn.setVisibility(View.INVISIBLE);

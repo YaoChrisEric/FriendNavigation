@@ -3,10 +3,13 @@ package com.example.yaohuasun.friendnavigation;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.yaohuasun.friendnavigation.Listeners.RequestActivity.HangoutOnClickListener;
 import com.example.yaohuasun.friendnavigation.Listeners.RequestActivity.UserRefListener;
+import com.example.yaohuasun.friendnavigation.Models.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -44,7 +47,7 @@ public class RequestActivity extends AppCompatActivity {
     private MeetRequestModel mCurrentMeetRequest;
     private UserRefListener userRefListener;
 
-    private String basicChatFriend;
+    private String mBasicChatFriend;
     private String mReceivingMeetRequest;
 
     @Override
@@ -100,30 +103,8 @@ public class RequestActivity extends AppCompatActivity {
                 userRefListener
         );
 
-
-
         mHanghoutBtn = (Button)findViewById(R.id.hangout_button);
-        mHanghoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMeetRequestReference.child("initiatorState").setValue("false");
-                mMeetRequestReference.child("initiatorEmailAddr").setValue("");
-                mMeetRequestReference.child("responderEmailAddr").setValue("");
-                mMeetRequestReference.child("responderState").setValue("false");
-
-                mUserRef.child(FNUtil.encodeEmail(basicChatFriend)).child("receivingMapRequest").setValue("false");
-
-                Intent intent = new Intent(view.getContext(),ChatActivity.class);
-                // TODO: make a constant for string "friendEmailAddr"
-                // this extra is not the best way to pass in friend name
-                // TODO: add a listener here to the basic
-                //intent.putExtra("friendEmailAddr",mFriendEmailAddr);
-
-                startActivity(intent);
-                finish();
-                // might instead need to firstly go back to chat activity and then go to map activity
-            }
-        });
+        mHanghoutBtn.setOnClickListener(new HangoutOnClickListener(this));
 
         // TODO we will need to start a timer of 10 sec and beeping and timeout if user doesn't accpet and go back to ChatActivity
         // similar to hangout button handler
@@ -231,6 +212,28 @@ public class RequestActivity extends AppCompatActivity {
         // and start the MapsActivity
         intent.putExtra("ChatId", mChatId);
         intent.putExtra("isInitiator", isInitiator);
+        startActivity(intent);
+        finish();
+    }
+
+    public void updateMeetRequestReference(UserModel user, DatabaseReference meetRequestReference, String basicChatFriend) {
+        mBasicChatFriend = user.getCurrentChatFriend();
+        mMeetRequestReference = meetRequestReference;
+    }
+
+    public void handleHangoutClick(Intent intent) {
+        mMeetRequestReference.child("initiatorState").setValue("false");
+        mMeetRequestReference.child("initiatorEmailAddr").setValue("");
+        mMeetRequestReference.child("responderEmailAddr").setValue("");
+        mMeetRequestReference.child("responderState").setValue("false");
+
+        mUserRef.child(FNUtil.encodeEmail(mBasicChatFriend)).child("receivingMapRequest").setValue("false");
+
+        // TODO: make a constant for string "friendEmailAddr"
+        // this extra is not the best way to pass in friend name
+        // TODO: add a listener here to the basic
+        //intent.putExtra("friendEmailAddr",mFriendEmailAddr);
+
         startActivity(intent);
         finish();
     }
