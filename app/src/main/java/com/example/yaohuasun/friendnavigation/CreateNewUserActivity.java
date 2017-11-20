@@ -66,9 +66,6 @@ public class CreateNewUserActivity extends AppCompatActivity {
                             CreateNewUserActivity.this);
                         mFirebaseAuth.createUserWithEmailAndPassword(userEmailString, userPasswordString).
                                 addOnCompleteListener(CreateNewUserActivity.this,userRegistrationListener);
-                    // should finish this activity at this point
-                    finish();
-
                 }
                 else{
                     // debug Log.i("Yao", "position r");
@@ -80,15 +77,8 @@ public class CreateNewUserActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
+    public void NavigateToFriendList() {
 
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
-
 }
 
