@@ -27,9 +27,6 @@ public class SigninWithEmailAndPasswordListener implements OnCompleteListener<Au
     public void onComplete(@NonNull Task<AuthResult> task) {
         if(task.isSuccessful())
         {
-            //mDatabaseRef.addValueEventListener();
-            // TODO: perform validation of the user
-            // if validated in above TODO, start the friend list activity
             mContext.startActivity(new Intent(mContext, FNFriendListActivity.class));
         }
         else

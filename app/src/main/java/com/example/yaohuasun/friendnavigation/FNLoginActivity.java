@@ -19,8 +19,6 @@ public class FNLoginActivity extends AppCompatActivity {
     FirebaseAuth mFirebaseAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
 
-    //DatabaseReference mDatabaseRef;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +31,6 @@ public class FNLoginActivity extends AppCompatActivity {
         mPasswordEditText = (EditText)findViewById(R.id.editText_LoginPassword);
 
         // TODO: change the "Users" into string values defined in xml file
-        //mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("Users");
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthListener = new AuthLoginActivity(FNLoginActivity.this);
 

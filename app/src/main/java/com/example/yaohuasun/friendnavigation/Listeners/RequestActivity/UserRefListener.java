@@ -34,15 +34,11 @@ public class UserRefListener implements ValueEventListener{
 
     private ValueEventListener mMeetRequestRefListener;
 
-
-
-    public UserRefListener(FirebaseDatabase firebaseDatabase, RequestActivity RequestActivity, DatabaseReference basicChatRef, Button acceptBtn, String currentUserEmail){
+    public UserRefListener(FirebaseDatabase firebaseDatabase, RequestActivity RequestActivity, Button acceptBtn, String currentUserEmail){
         mFirebaseDatabase = firebaseDatabase;
         mRequestActivity = RequestActivity;
-        mBasicChatRef = basicChatRef;
         mAcceptBtn = acceptBtn;
         mCurrentUserEmail = currentUserEmail;
-
     }
 
     @Override
@@ -57,16 +53,13 @@ public class UserRefListener implements ValueEventListener{
                 mChatId = FNUtil.generateIDWithTwoEmails(mCurrentUserEmail, basicChatFriend );
                 mBasicChatRef = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId);
                 mMeetRequestReference = mBasicChatRef.child("meetRequest");
-                mRequestActivity.updateMeetRequestReference(user, mMeetRequestReference, basicChatFriend);
-                // mMeetRequestMessageRef = mBasicChatDatabaseRef.child(mChatId).child("meetRequest");
+                mRequestActivity.updateMeetRequestReference(user, mMeetRequestReference, basicChatFriend, mChatId);
                 mReceivingMeetRequest = user.getReceivingMapRequest();
 
                 if(mReceivingMeetRequest.equals("false")){
                     // the caller doesn't need the accept bubton
                     mAcceptBtn.setVisibility(View.INVISIBLE);
                     mIsCallingActivityInitiator = true;
-                    // need to add a listener to the responder state, when true , open the map activity,
-                    // remove the listener below
 
                     // attach value event listener to the meetrequest reference
                     mMeetRequestRefListener = mMeetRequestReference.addValueEventListener(new MeetRequestRefListener(mRequestActivity));

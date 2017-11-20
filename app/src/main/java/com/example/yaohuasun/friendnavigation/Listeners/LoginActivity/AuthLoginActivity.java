@@ -33,9 +33,5 @@ public class AuthLoginActivity implements FirebaseAuth.AuthStateListener{
             // if validated in above TODO, start the friend list activity
             mContext.startActivity(new Intent(mContext, FNFriendListActivity.class));
         }
-        else
-        {
-            // not signed in, do nothing for now
-        }
     }
 }
