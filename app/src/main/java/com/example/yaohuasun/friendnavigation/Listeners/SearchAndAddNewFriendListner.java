@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.yaohuasun.friendnavigation.FNFriendListActivity;
+import com.example.yaohuasun.friendnavigation.Models.FriendModel;
 import com.example.yaohuasun.friendnavigation.Models.UserModel;
 import com.example.yaohuasun.friendnavigation.Utils.FNUtil;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +25,10 @@ public class SearchAndAddNewFriendListner implements ValueEventListener {
     private String mSearchUserEmail;
     private Context mContext;
     private FirebaseDatabase mFirebaseDatabase;
+
+    DatabaseReference mFriendListRootRef;
+
+    String mFriendEmail;
 
     public SearchAndAddNewFriendListner(String userEmail,
                                         String searchUserEmail,
@@ -48,7 +53,7 @@ public class SearchAndAddNewFriendListner implements ValueEventListener {
             Toast.makeText(mContext,"sure user existed? perhaps not", Toast.LENGTH_LONG).show();
             return;
         }
-
+        // we don't need to set the main user email if it already existed
         try {
             mFriendMapRef.child("mainUserEmail").setValue(mCurrentUserEmail);
         } catch (Exception e) {
@@ -56,7 +61,7 @@ public class SearchAndAddNewFriendListner implements ValueEventListener {
             e.printStackTrace();
         }
 
-        DatabaseReference mFriendListRef = mFriendMapRef.child("FriendList").push();
+        mFriendListRootRef = mFriendMapRef.child("FriendList");
 
         UserModel user = dataSnapshot.child(encodedSearchUserEmail).getValue(UserModel.class);
 
@@ -65,13 +70,60 @@ public class SearchAndAddNewFriendListner implements ValueEventListener {
             return;
         }
 
-        String useremail = user.getEmailAddr();
+        mFriendEmail = user.getEmailAddr();
 
-        try {
-            mFriendListRef.child("friendEmailAddr").setValue(useremail);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!mFriendEmail.trim().equals(mCurrentUserEmail.trim()) )
+        {
+            mFriendListRootRef.orderByChild("friendEmailAddr").equalTo(mFriendEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()) {
+                        FriendModel friend = dataSnapshot.getValue(FriendModel.class);
+                        if(null != friend) {
+                            String friendEmailAddr = friend.getFriendEmailAddr();
+                            Toast.makeText(mContext, "friend1 " + friendEmailAddr + "really is already added to the list ", Toast.LENGTH_LONG).show();
+                            // we need to check here whether the user has already been added to the friend map, if so, we don't need to add again
+
+                        }else
+                        {
+                            Log.i("position1120","datasnapshot is " + dataSnapshot.toString());
+                            DatabaseReference mFriendListRef = mFriendListRootRef.push();
+                            try {
+                                mFriendListRef.child("friendEmailAddr").setValue(mFriendEmail);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    else
+                    {
+
+                        Log.i("position1120_1","datasnapshot is " + dataSnapshot.toString());
+                        DatabaseReference mFriendListRef = mFriendListRootRef.push();
+                        try {
+                            mFriendListRef.child("friendEmailAddr").setValue(mFriendEmail);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
+        else
+        {
+            Toast.makeText(mContext, "cannot add oneself as friend ", Toast.LENGTH_LONG).show();
+
+        }
+
+
+
+
+
     }
 
     @Override
