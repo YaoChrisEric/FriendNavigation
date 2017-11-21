@@ -13,15 +13,15 @@ import com.google.firebase.database.DatabaseReference;
  * Created by unger on 11/19/2017.
  */
 
-public class HangoutOnClickListener implements View.OnClickListener{
+public class NavigateToChatActivity implements View.OnClickListener{
     RequestActivity mRequestActivity;
 
-    public HangoutOnClickListener(RequestActivity requestActivity) {
+    public NavigateToChatActivity(RequestActivity requestActivity) {
         mRequestActivity = requestActivity;
     }
 
     @Override
     public void onClick(View view) {
-        mRequestActivity.handleHangoutClick(new Intent(view.getContext(), ChatActivity.class));
+        mRequestActivity.navigateToChatActivity(new Intent(view.getContext(), ChatActivity.class));
     }
 }

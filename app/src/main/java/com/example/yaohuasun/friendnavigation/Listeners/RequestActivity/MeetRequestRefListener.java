@@ -36,7 +36,7 @@ public class MeetRequestRefListener implements ValueEventListener {
                     Log.i("DEAD11", "unExpected situation,wrong, initiatorEmail is" + initiatorEmail + "initiatorState is"+initiatorState);
                 }
 
-                mRequestActivity.navigateToStartActivity("true");
+                mRequestActivity.navigateToMapActivity("true");
             }
         }
     }

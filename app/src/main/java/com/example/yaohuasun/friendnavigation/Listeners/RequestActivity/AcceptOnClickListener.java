@@ -21,6 +21,6 @@ public class AcceptOnClickListener implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         mMeetRequestReference.child("responderState").setValue("true");
-        mRequestActivity.navigateToStartActivity("false");
+        mRequestActivity.navigateToMapActivity("false");
     }
 }

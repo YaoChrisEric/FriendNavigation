@@ -3,11 +3,10 @@ package com.example.yaohuasun.friendnavigation;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.yaohuasun.friendnavigation.Listeners.RequestActivity.HangoutOnClickListener;
+import com.example.yaohuasun.friendnavigation.Listeners.RequestActivity.NavigateToChatActivity;
 import com.example.yaohuasun.friendnavigation.Listeners.RequestActivity.UserRefListener;
 import com.example.yaohuasun.friendnavigation.Models.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -70,7 +69,7 @@ public class RequestActivity extends AppCompatActivity {
         );
 
         mHanghoutBtn = (Button)findViewById(R.id.hangout_button);
-        mHanghoutBtn.setOnClickListener(new HangoutOnClickListener(this));
+        mHanghoutBtn.setOnClickListener(new NavigateToChatActivity(this));
     }
 
     @Override
@@ -94,7 +93,7 @@ public class RequestActivity extends AppCompatActivity {
         }
     }
 
-    public void navigateToStartActivity(String isInitiator) {
+    public void navigateToMapActivity(String isInitiator) {
         Intent intent = new Intent(RequestActivity.this,MapsActivity.class);
         // these extra info could be found in maps activity
         // and start the MapsActivity
@@ -110,7 +109,7 @@ public class RequestActivity extends AppCompatActivity {
         mChatId = chatId;
     }
 
-    public void handleHangoutClick(Intent intent) {
+    public void navigateToChatActivity(Intent intent) {
         mMeetRequestReference.child("initiatorState").setValue("false");
         mMeetRequestReference.child("initiatorEmailAddr").setValue("");
         mMeetRequestReference.child("responderEmailAddr").setValue("");
