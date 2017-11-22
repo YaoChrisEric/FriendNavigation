@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 
 import com.example.yaohuasun.friendnavigation.Listeners.FriendMapLocationListener;
 import com.google.android.gms.common.ConnectionResult;
@@ -183,6 +184,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mGoogleApiClient.connect();
     }
+
+
+    public void onEndNavBtnClick(View v){
+
+        // when this button is clicked, we should end the current navigation and go to friend list view
+        // much like the actions when hangout button is clicked in request activity
+
+        // also it should modify a db ref so that the listener in phone 2 will hear this actions
+
+        // we also need to implement listener in phone 2
+    }
+
 
     // TODO: in onDestroy or onStop, set mReceivingMeetRequest = user.getReceivingMapRequest(); to false
 }
