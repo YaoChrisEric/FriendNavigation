@@ -1,18 +1,18 @@
 <resources>
-    <string name="app_name">FriendNavigation</string>
+    <string name="app_name">Friend Navigation</string>
     <string name="welcome1">Welcome to Friend Navigation!</string>
-    <string name="title_activity_fnfriend_list">FNFriendListActivity</string>
-    <string name="title_activity_fnlogin">FNLoginActivity</string>
-    <string name="title_activity_create_new_user">CreateNewUserActivity</string>
+    <string name="title_activity_fnfriend_list">Friends</string>
+    <string name="title_activity_fnlogin">Login</string>
+    <string name="title_activity_create_new_user">Register</string>
     <string name="sign_out">Sign Out</string>
-    <string name="title_activity_chat">ChatActivity</string>
+    <string name="title_activity_chat">Chat</string>
     <string name="title_activity_maps">Map</string>
 
-    <string name="title_activity_request">RequestActivity</string>
+    <string name="title_activity_request">Request Navigation</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="starting_nav">STARTING\nNAVIGATION\n...</string>
-    <string name="hangout_button">Hangout</string>
+    <string name="hangout_button">Decline</string>
     <string name="accept_button">Accept</string>
     <string name="nav_context">Start Navigation to Meet Friend</string>
 </resources>
