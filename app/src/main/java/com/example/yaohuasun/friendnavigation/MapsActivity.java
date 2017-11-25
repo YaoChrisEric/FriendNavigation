@@ -8,8 +8,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.yaohuasun.friendnavigation.Listeners.FriendMapLocationListener;
@@ -33,7 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.example.yaohuasun.friendnavigation.Models.MeetLocationModel;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback ,
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback ,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener{
@@ -75,6 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         mMeetLocationsReference = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId).child("MeetLocation");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
@@ -186,7 +190,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    public void onEndNavBtnClick(View v){
+    //public void onEndNavBtnClick(View v){
 
         // when this button is clicked, we should end the current navigation and go to friend list view
         // much like the actions when hangout button is clicked in request activity
@@ -194,8 +198,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // also it should modify a db ref so that the listener in phone 2 will hear this actions
 
         // we also need to implement listener in phone 2
-    }
+    //}
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()){
+                // respond to up/home button to go back to parent activity
+                case android.R.id.home:
+                    // before we return to parent task, we will need to set the fb reference for the
+                    // responder listener to trigger
 
+                    NavUtils.navigateUpFromSameTask(this);
+                    return true;
+            }
+
+            return super.onOptionsItemSelected(item);
+        }
 
     // TODO: in onDestroy or onStop, set mReceivingMeetRequest = user.getReceivingMapRequest(); to false
 }
