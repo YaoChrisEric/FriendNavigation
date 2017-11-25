@@ -94,7 +94,7 @@ public class RequestActivity extends AppCompatActivity {
     }
 
     public void navigateToMapActivity(String isInitiator) {
-        Intent intent = new Intent(RequestActivity.this,MapsActivity.class);
+        Intent intent = new Intent(RequestActivity.this,ChatActivity.class);
         // these extra info could be found in maps activity
         // and start the MapsActivity
         intent.putExtra("ChatId", mChatId);

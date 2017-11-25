@@ -14,32 +14,49 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.yaohuasun.friendnavigation.Listeners.CreateChatListener;
+import com.example.yaohuasun.friendnavigation.Listeners.CreateFriendListener;
+import com.example.yaohuasun.friendnavigation.Listeners.IncomingChatListener;
+import com.example.yaohuasun.friendnavigation.Listeners.IncomingNavigationListener;
+import com.example.yaohuasun.friendnavigation.Listeners.ProposeFriendListener;
 import com.example.yaohuasun.friendnavigation.Listeners.SearchAndAddNewFriendListner;
+import com.example.yaohuasun.friendnavigation.Models.MeetRequestModel;
+import com.example.yaohuasun.friendnavigation.Models.MessageModel;
+import com.example.yaohuasun.friendnavigation.Models.UserModel;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.example.yaohuasun.friendnavigation.Utils.FNUtil;
 import com.example.yaohuasun.friendnavigation.Models.FriendModel;
-import com.example.yaohuasun.friendnavigation.Models.UserModel;
+import com.google.firebase.database.ValueEventListener;
 
 public class FNFriendListActivity extends AppCompatActivity {
 
     private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseListAdapter<MessageModel> mMessageListAdapter;
     private DatabaseReference mDatabaseFriendMapRef;
     private FirebaseUser mCurrentUser;
     private FirebaseRecyclerAdapter mAdapter;
     private DatabaseReference mDatabaseUserRef;
     private DatabaseReference mUsers;
     private DatabaseReference mFriendMap;
+    private DatabaseReference mBasicChatDatabaseRef;
+    private DatabaseReference mMeetRequestMessageRef;
+    private DatabaseReference mMessageDataBaseReference;
+
+    private FNFriendListActivity mActivity;
+    private ValueEventListener mMeetRequestRefListener;
+
+    private String mCurrentUserEmail;
+
+    private UserModel mUser;
+    private MeetRequestModel mCurrentMeetRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +71,15 @@ public class FNFriendListActivity extends AppCompatActivity {
 
         mUsers = mFirebaseDatabase.getReference().child("Users");
         mFriendMap = mFirebaseDatabase.getReference().child("FriendMap");
+
+        mBasicChatDatabaseRef = mFirebaseDatabase.getReference().child("BasicChat");
+
+        mActivity = this;
+        mCurrentUserEmail = mCurrentUser.getEmail().trim();
+
+        mUsers.orderByChild("emailAddr").equalTo(mCurrentUserEmail).addListenerForSingleValueEvent(
+                new CreateFriendListener(mBasicChatDatabaseRef, mCurrentUserEmail, this)
+        );
 
         displayUserList();
     }
@@ -145,19 +171,72 @@ public class FNFriendListActivity extends AppCompatActivity {
                 holder.setEmailAddr(friend.getFriendEmailAddr());
                 holder.setListItemNumber(Integer.toString(position));
 
+
                 holder.mView.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(FNFriendListActivity.this,"you clicked on item "+ Integer.toString(position), Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(view.getContext(),ChatActivity.class);
-
-                        mDatabaseUserRef.child("currentChatFriend").setValue(friend.getFriendEmailAddr());
-
-                        startActivity(intent);
+                        mUsers.orderByChild("emailAddr").equalTo(mCurrentUserEmail).addListenerForSingleValueEvent(
+                                new ProposeFriendListener(mBasicChatDatabaseRef, mUsers, friend, mCurrentUser.getEmail(), mActivity, view)
+                        );
                     }
                 });
             }
         };
+    }
+
+    public void NavigateToRequestActivity(View view) {
+        // Toast.makeText(FNFriendListActivity.this,"you clicked on item "+ Integer.toString(position), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(view.getContext(),RequestActivity.class);
+        startActivity(intent);
+    }
+
+    private void attachNavigationRefListener()
+    {
+        if(null != mMeetRequestRefListener) {
+            return;
+        }
+
+        mMeetRequestRefListener = mMeetRequestMessageRef.addValueEventListener(
+                new IncomingChatListener(
+                        mUser,
+                        this
+                )
+        );
+    }
+
+    private void detachNavigationRefListener(){
+        if (null!= mMeetRequestRefListener)
+        {
+            mMeetRequestMessageRef.removeEventListener(mMeetRequestRefListener);
+            mMeetRequestRefListener = null;
+        }
+    }
+
+    public void SetupChatAdapter(DatabaseReference databaseReference) {
+        /*
+        mMessageDataBaseReference = databaseReference;
+        mMessageListAdapter = CreateChatAdapter(databaseReference);
+        mMessageList.setAdapter(mMessageListAdapter);
+        */
+    }
+
+    public void setCurrentUser(UserModel user) {
+        mUser = user;
+    }
+
+    public void setCurrentMeetRequest(MeetRequestModel currentMeetRequest) {
+        mCurrentMeetRequest = currentMeetRequest;
+    }
+
+    public void setMeetRequestMessageRef(DatabaseReference databaseReference) {
+        mMeetRequestMessageRef = databaseReference;
+        detachNavigationRefListener();
+        attachNavigationRefListener();
+    }
+
+    public void NavigateToRequestActivity() {
+        Intent intent = new Intent(FNFriendListActivity.this, RequestActivity.class);
+        startActivity(intent);
     }
 }
 

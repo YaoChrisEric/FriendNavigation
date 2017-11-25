@@ -5,6 +5,7 @@ import android.provider.ContactsContract;
 import android.view.View;
 
 import com.example.yaohuasun.friendnavigation.ChatActivity;
+import com.example.yaohuasun.friendnavigation.FNFriendListActivity;
 import com.example.yaohuasun.friendnavigation.RequestActivity;
 import com.example.yaohuasun.friendnavigation.Utils.FNUtil;
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +23,6 @@ public class NavigateToChatActivity implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
-        mRequestActivity.navigateToChatActivity(new Intent(view.getContext(), ChatActivity.class));
+        mRequestActivity.navigateToChatActivity(new Intent(view.getContext(), FNFriendListActivity.class));
     }
 }
