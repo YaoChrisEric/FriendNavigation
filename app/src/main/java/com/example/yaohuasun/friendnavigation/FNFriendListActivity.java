@@ -109,12 +109,6 @@ public class FNFriendListActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        AuthUI.getInstance().signOut(this);
-    }
-
     private void displayUserList(){
 
         RecyclerView friendList = (RecyclerView)findViewById(R.id.friend_list_view);

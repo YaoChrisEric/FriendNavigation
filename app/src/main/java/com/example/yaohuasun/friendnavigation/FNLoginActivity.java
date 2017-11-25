@@ -1,6 +1,5 @@
 package com.example.yaohuasun.friendnavigation;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -54,9 +53,5 @@ public class FNLoginActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mFirebaseAuth.removeAuthStateListener(mAuthListener);
-    }
-
-    public void navigateToFriendList() {
-        finish();
     }
 }

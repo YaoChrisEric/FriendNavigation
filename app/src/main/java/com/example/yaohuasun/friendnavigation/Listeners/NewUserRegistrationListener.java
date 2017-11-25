@@ -49,7 +49,7 @@ public class NewUserRegistrationListener implements OnCompleteListener<AuthResul
 
             Toast.makeText(mActivity, "Successfully created account", Toast.LENGTH_LONG).show();
             // move to login activity
-            mActivity.NavigateToFriendList();
+            mActivity.startActivity(new Intent(mActivity,FNLoginActivity.class));
         }
         else
         {
