@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.example.yaohuasun.friendnavigation.FNFriendListActivity;
+import com.example.yaohuasun.friendnavigation.FNLoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -17,21 +18,21 @@ import static android.support.v4.content.ContextCompat.startActivity;
  */
 
 public class SigninWithEmailAndPasswordListener implements OnCompleteListener<AuthResult>{
-    private Context mContext;
+    private FNLoginActivity mActivity;
 
-    public SigninWithEmailAndPasswordListener(Context context) {
-        mContext = context;
+    public SigninWithEmailAndPasswordListener(FNLoginActivity activity) {
+        mActivity = activity;
     }
 
     @Override
     public void onComplete(@NonNull Task<AuthResult> task) {
         if(task.isSuccessful())
         {
-            mContext.startActivity(new Intent(mContext, FNFriendListActivity.class));
+            mActivity.navigateToFriendList();
         }
         else
         {
-            Toast.makeText(mContext,"Invalid username/password, Login Failed", Toast.LENGTH_LONG).show();
+            Toast.makeText(mActivity,"Invalid username/password, Login Failed", Toast.LENGTH_LONG).show();
         }
 
     }

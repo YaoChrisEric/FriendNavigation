@@ -71,14 +71,12 @@ public class CreateNewUserActivity extends AppCompatActivity {
                     // debug Log.i("Yao", "position r");
                     Toast.makeText(CreateNewUserActivity.this, "empty user name or password", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
-
     }
 
     public void NavigateToFriendList() {
-
+        finish();
     }
 }
 

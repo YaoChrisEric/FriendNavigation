@@ -173,8 +173,8 @@ public class ChatActivity extends AppCompatActivity {
         mMessageList.setAdapter(mMessageListAdapter);
     }
 
-    public void NavigateToMapsActivity() {
-        Intent intent = new Intent(ChatActivity.this, MapsActivity.class);
+    public void NavigateToRequestActivity() {
+        Intent intent = new Intent(ChatActivity.this, RequestActivity.class);
         startActivity(intent);
     }
 

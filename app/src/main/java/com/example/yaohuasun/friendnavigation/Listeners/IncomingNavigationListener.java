@@ -1,7 +1,6 @@
 package com.example.yaohuasun.friendnavigation.Listeners;
 
 import com.example.yaohuasun.friendnavigation.ChatActivity;
-import com.example.yaohuasun.friendnavigation.FNFriendListActivity;
 import com.example.yaohuasun.friendnavigation.Models.MeetRequestModel;
 import com.example.yaohuasun.friendnavigation.Models.UserModel;
 import com.google.firebase.database.DataSnapshot;
@@ -18,8 +17,8 @@ public class IncomingNavigationListener implements ValueEventListener {
     private ChatActivity mActivity;
 
     public IncomingNavigationListener(
-            UserModel user,
-            ChatActivity activity
+        UserModel user,
+        ChatActivity activity
         ) {
         mUser = user;
         mActivity = activity;
@@ -42,7 +41,7 @@ public class IncomingNavigationListener implements ValueEventListener {
 
         mActivity.setCurrentMeetRequest(mCurrentMeetRequest);
 
-        mActivity.NavigateToMapsActivity();
+        mActivity.NavigateToRequestActivity();
     }
 
     @Override

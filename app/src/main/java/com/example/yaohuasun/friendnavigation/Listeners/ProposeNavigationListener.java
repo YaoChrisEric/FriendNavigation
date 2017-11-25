@@ -55,7 +55,7 @@ public class ProposeNavigationListener implements ValueEventListener {
             mUserRef.child(FNUtil.encodeEmail(currentChatFriend)).child("receivingMapRequest").setValue("true");
         }
 
-        mActivity.NavigateToMapsActivity();
+        mActivity.NavigateToRequestActivity();
     }
 
     @Override

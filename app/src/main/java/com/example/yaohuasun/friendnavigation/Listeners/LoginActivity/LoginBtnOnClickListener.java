@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
+import com.example.yaohuasun.friendnavigation.FNLoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
@@ -13,12 +14,12 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginBtnOnClickListener implements View.OnClickListener {
     private FirebaseAuth mFirebaseAuth;
-    private Context mContext;
+    private FNLoginActivity mActivity;
     private EditText mUserEmailEditText, mUserPasswordEditText;
 
-    public LoginBtnOnClickListener(FirebaseAuth firebaseAuth, Context context, EditText userEmailEditText, EditText userPasswordEditText) {
+    public LoginBtnOnClickListener(FirebaseAuth firebaseAuth, FNLoginActivity activity, EditText userEmailEditText, EditText userPasswordEditText) {
         mFirebaseAuth = firebaseAuth;
-        mContext = context;
+        mActivity = activity;
         mUserEmailEditText = userEmailEditText;
         mUserPasswordEditText = userPasswordEditText;
     }
@@ -31,7 +32,7 @@ public class LoginBtnOnClickListener implements View.OnClickListener {
         if(!TextUtils.isEmpty(userEmailString) && !TextUtils.isEmpty(userPasswordString))
         {
             mFirebaseAuth.signInWithEmailAndPassword(userEmailString,userPasswordString).addOnCompleteListener(
-                    new SigninWithEmailAndPasswordListener(mContext)
+                    new SigninWithEmailAndPasswordListener(mActivity)
             );
         }
     }
