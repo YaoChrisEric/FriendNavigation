@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yaohuasun.friendnavigation.Listeners.CreateChatListener;
+import com.example.yaohuasun.friendnavigation.Listeners.DestroyChatListener;
 import com.example.yaohuasun.friendnavigation.Listeners.IncomingNavigationListener;
 import com.example.yaohuasun.friendnavigation.Listeners.ProposeNavigationListener;
 import com.firebase.ui.database.FirebaseListAdapter;
@@ -94,6 +95,18 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        detachNavigationRefListener();
+        mMessageListAdapter.cleanup();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mUserRef.orderByChild("emailAddr").equalTo(mCurrentUserEmail).addListenerForSingleValueEvent(
+                new DestroyChatListener(mMeetRequestMessageRef, mUserRef, mCurrentUserEmail)
+        );
 
         detachNavigationRefListener();
         mMessageListAdapter.cleanup();
