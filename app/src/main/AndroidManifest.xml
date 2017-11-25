@@ -13,29 +13,31 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".CreateNewUserActivity"
             android:label="@string/title_activity_create_new_user"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".FNFriendListActivity"
             android:label="@string/title_activity_fnfriend_list"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".ChatActivity"
             android:label="@string/title_activity_chat"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".FNFriendListActivity">
+            android:parentActivityName=".FNFriendListActivity"
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
               android:value=".FNFriendListActivity"
@@ -44,12 +46,14 @@
         <activity
             android:name=".FNLoginActivity"
             android:label="@string/title_activity_fnlogin"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".RequestActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_request"
-            android:theme="@style/FullscreenTheme" />
+            android:theme="@style/FullscreenTheme"
+            />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
