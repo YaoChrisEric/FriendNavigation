@@ -8,8 +8,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.yaohuasun.friendnavigation.Listeners.FriendMapLocationListener;
@@ -33,7 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.example.yaohuasun.friendnavigation.Models.MeetLocationModel;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback ,
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback ,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener{
@@ -55,6 +58,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private MeetLocationModel mCurrentFriendsLocation;
 
+    private boolean mEndNavigation;
+    private DatabaseReference mMeetRequestReference;
+
 
     // first task, display current location on map
     @Override
@@ -75,6 +81,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         mMeetLocationsReference = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId).child("MeetLocation");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mEndNavigation = false;
     }
 
     /**
@@ -93,7 +102,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMeetLocationsReference.addValueEventListener( new FriendMapLocationListener(otherPartyLocationMarker,
                 mCurrentFriendsLocation,
                 mIsCallingActivityInitiator,
-                mMap
+                mMap,
+                this,
+                mFirebaseDatabase,
+                mChatId
         ));
 
         // Add a marker in Sydney and move the camera
@@ -137,45 +149,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-        lastlocation = location;
-        if(currentLocationmMarker != null)
+        // only update location before back button is clicked
+        if (!mEndNavigation)
         {
-            currentLocationmMarker.remove();
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            lastlocation = location;
+            if(currentLocationmMarker != null)
+            {
+                currentLocationmMarker.remove();
 
+            }
+            Log.i("Yao1015","in onLocationChanged lat = "+latitude);
+            LatLng latLng = new LatLng(location.getLatitude() , location.getLongitude());
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Location");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            currentLocationmMarker = mMap.addMarker(markerOptions);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            // TODO: fix the camera problem
+            // TODO: save marker options to global, just update its position everytime
+
+            //mMap.animateCamera(CameraUpdateFactory.zoomBy(5));
+
+            //next step, save the latlang into the realtime db, and display both friends addr there
+
+            // initiatiorLatitude, initiatorLongitude or
+            // responderLatitude, responderLongitude
+
+            if(mIsCallingActivityInitiator.equals("true")){
+                mMeetLocationsReference.child("InitiatorLatitude").setValue(Double.toString(latitude));
+                mMeetLocationsReference.child("InitiatorLongitude").setValue(Double.toString(longitude));
+            }
+            else
+            {
+                mMeetLocationsReference.child("ResponderLatitude").setValue(Double.toString(latitude));
+                mMeetLocationsReference.child("ResponderLongitude").setValue(Double.toString(longitude));
+            }
+
+            if(null != mGoogleApiClient){
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
+            }
         }
-        Log.i("Yao1015","in onLocationChanged lat = "+latitude);
-        LatLng latLng = new LatLng(location.getLatitude() , location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Location");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        currentLocationmMarker = mMap.addMarker(markerOptions);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        // TODO: fix the camera problem
-        // TODO: save marker options to global, just update its position everytime
 
-        //mMap.animateCamera(CameraUpdateFactory.zoomBy(5));
-
-        //next step, save the latlang into the realtime db, and display both friends addr there
-
-        // initiatiorLatitude, initiatorLongitude or
-        // responderLatitude, responderLongitude
-
-        if(mIsCallingActivityInitiator.equals("true")){
-            mMeetLocationsReference.child("InitiatorLatitude").setValue(Double.toString(latitude));
-            mMeetLocationsReference.child("InitiatorLongitude").setValue(Double.toString(longitude));
-        }
-        else
-        {
-            mMeetLocationsReference.child("ResponderLatitude").setValue(Double.toString(latitude));
-            mMeetLocationsReference.child("ResponderLongitude").setValue(Double.toString(longitude));
-        }
-
-        if(null != mGoogleApiClient){
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
-        }
     }
 
     protected synchronized void bulidGoogleApiClient() {
@@ -185,17 +202,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mGoogleApiClient.connect();
     }
 
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()){
+                // respond to up/home button to go back to parent activity
+                case android.R.id.home:
+                    // before we return to parent task, we will need to set the fb reference for the
+                    // responder listener to trigger
+                    mEndNavigation = true;
+                    if(mIsCallingActivityInitiator.equals("true")){
+                        mMeetLocationsReference.child("InitiatorLatitude").setValue("500");
+                        mMeetLocationsReference.child("InitiatorLongitude").setValue("500");
+                    }
+                    else
+                    {
+                        mMeetLocationsReference.child("ResponderLatitude").setValue("500");
+                        mMeetLocationsReference.child("ResponderLongitude").setValue("500");
+                    }
+                    endFriendNavigationAndNavigateToChatActivity();
+                    return true;
+            }
 
-    public void onEndNavBtnClick(View v){
+            return super.onOptionsItemSelected(item);
+        }
 
-        // when this button is clicked, we should end the current navigation and go to friend list view
-        // much like the actions when hangout button is clicked in request activity
+        public void endFriendNavigationAndNavigateToChatActivity() {
+            mMeetRequestReference = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId).child("meetRequest");
+            mMeetRequestReference.child("initiatorState").setValue("false");
+            mMeetRequestReference.child("initiatorEmailAddr").setValue("");
+            mMeetRequestReference.child("responderEmailAddr").setValue("");
+            mMeetRequestReference.child("responderState").setValue("false");
 
-        // also it should modify a db ref so that the listener in phone 2 will hear this actions
-
-        // we also need to implement listener in phone 2
-    }
-
+            NavUtils.navigateUpFromSameTask(this);
+        }
 
     // TODO: in onDestroy or onStop, set mReceivingMeetRequest = user.getReceivingMapRequest(); to false
 }
