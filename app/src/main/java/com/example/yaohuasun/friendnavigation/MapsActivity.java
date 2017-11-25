@@ -202,16 +202,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mGoogleApiClient.connect();
     }
 
-
-    //public void onEndNavBtnClick(View v){
-
-        // when this button is clicked, we should end the current navigation and go to friend list view
-        // much like the actions when hangout button is clicked in request activity
-
-        // also it should modify a db ref so that the listener in phone 2 will hear this actions
-
-        // we also need to implement listener in phone 2
-    //}
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             switch (item.getItemId()){
@@ -229,17 +219,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         mMeetLocationsReference.child("ResponderLatitude").setValue("500");
                         mMeetLocationsReference.child("ResponderLongitude").setValue("500");
                     }
-                    mMeetRequestReference = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId).child("meetRequest");
-                    mMeetRequestReference.child("initiatorState").setValue("false");
-                    mMeetRequestReference.child("initiatorEmailAddr").setValue("");
-                    mMeetRequestReference.child("responderEmailAddr").setValue("");
-                    mMeetRequestReference.child("responderState").setValue("false");
-
-                    NavUtils.navigateUpFromSameTask(this);
+                    endFriendNavigationAndNavigateToChatActivity();
                     return true;
             }
 
             return super.onOptionsItemSelected(item);
+        }
+
+        public void endFriendNavigationAndNavigateToChatActivity() {
+            mMeetRequestReference = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId).child("meetRequest");
+            mMeetRequestReference.child("initiatorState").setValue("false");
+            mMeetRequestReference.child("initiatorEmailAddr").setValue("");
+            mMeetRequestReference.child("responderEmailAddr").setValue("");
+            mMeetRequestReference.child("responderState").setValue("false");
+
+            NavUtils.navigateUpFromSameTask(this);
         }
 
     // TODO: in onDestroy or onStop, set mReceivingMeetRequest = user.getReceivingMapRequest(); to false

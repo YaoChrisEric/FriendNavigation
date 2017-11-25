@@ -115,12 +115,7 @@ public class FriendMapLocationListener implements ValueEventListener{
             }
             else {
                 // we end the navigation and go to parent activity
-                mMeetRequestReference = mFirebaseDatabase.getReference().child("BasicChat").child(mCurrentChatId).child("meetRequest");
-                mMeetRequestReference.child("initiatorState").setValue("false");
-                mMeetRequestReference.child("initiatorEmailAddr").setValue("");
-                mMeetRequestReference.child("responderEmailAddr").setValue("");
-                mMeetRequestReference.child("responderState").setValue("false");
-                NavUtils.navigateUpFromSameTask(mMapsActivity);
+                mMapsActivity.endFriendNavigationAndNavigateToChatActivity();
             }
         }
     }
