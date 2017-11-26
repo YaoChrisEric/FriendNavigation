@@ -18,68 +18,48 @@ import com.google.firebase.database.ValueEventListener;
  */
 
 public class UserRefListener implements ValueEventListener{
+
     private FirebaseDatabase mFirebaseDatabase;
     private RequestActivity mRequestActivity;
-    private DatabaseReference mBasicChatRef;
-    private DatabaseReference mMeetRequestReference;
-
-    private Button mAcceptBtn;
-
     private String mCurrentUserEmail;
-    private String basicChatFriend;
-    private String mChatId;
-    private String mReceivingMeetRequest;
 
-    private Boolean mIsCallingActivityInitiator;
-
-    private ValueEventListener mMeetRequestRefListener;
-
-    public UserRefListener(FirebaseDatabase firebaseDatabase, RequestActivity RequestActivity, Button acceptBtn, String currentUserEmail){
+    public UserRefListener(FirebaseDatabase firebaseDatabase, RequestActivity RequestActivity, String currentUserEmail){
         mFirebaseDatabase = firebaseDatabase;
         mRequestActivity = RequestActivity;
-        mAcceptBtn = acceptBtn;
         mCurrentUserEmail = currentUserEmail;
     }
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-        if (null!= dataSnapshot.getValue()){
-            Log.i("position1010", "in OnDataChange, dataSnapShot Value is" + dataSnapshot.getValue().toString());
-            UserModel user = dataSnapshot.child(FNUtil.encodeEmail(mCurrentUserEmail)).getValue(UserModel.class);
-            if (user != null) {
 
-                basicChatFriend = user.getCurrentChatFriend();
-                Log.i("position1002", "basicChatFriend is" + basicChatFriend);
-                mChatId = FNUtil.generateIDWithTwoEmails(mCurrentUserEmail, basicChatFriend );
-                mBasicChatRef = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId);
-                mMeetRequestReference = mBasicChatRef.child("meetRequest");
-                mRequestActivity.updateMeetRequestReference(user, mMeetRequestReference, basicChatFriend, mChatId);
-                mReceivingMeetRequest = user.getReceivingMapRequest();
+        if (dataSnapshot.getValue() == null) {
+            return;
+        }
 
-                if(mReceivingMeetRequest.equals("false")){
-                    // the caller doesn't need the accept bubton
-                    mAcceptBtn.setVisibility(View.INVISIBLE);
-                    mIsCallingActivityInitiator = true;
+        Log.i("position1010", "in OnDataChange, dataSnapShot Value is" + dataSnapshot.getValue().toString());
 
-                    // attach value event listener to the meetrequest reference
-                    mMeetRequestRefListener = mMeetRequestReference.addValueEventListener(new MeetRequestRefListener(mRequestActivity));
-                }
-                else
-                {
-                    mIsCallingActivityInitiator = false;
-                    Log.i("requestActivity01"," mIsCallingActivityInitiator is "+ mIsCallingActivityInitiator);
-                    mAcceptBtn.setVisibility(View.VISIBLE);
-                    mAcceptBtn.setOnClickListener(new AcceptOnClickListener(mRequestActivity, mMeetRequestReference));
-                }
-            }
+        UserModel user = dataSnapshot.child(FNUtil.encodeEmail(mCurrentUserEmail)).getValue(UserModel.class);
+        if (user == null) {
+            return;
+        }
+
+        String basicChatFriend = user.getCurrentChatFriend();
+        Log.i("position1002", "basicChatFriend is" + basicChatFriend);
+        String chatId = FNUtil.generateIDWithTwoEmails(mCurrentUserEmail, basicChatFriend);
+        DatabaseReference basicChatRef = mFirebaseDatabase.getReference().child("BasicChat").child(chatId);
+        DatabaseReference meetRequestReference = basicChatRef.child("meetRequest");
+        mRequestActivity.updateMeetRequestReference(user, meetRequestReference, basicChatFriend, chatId);
+
+        String receivingMeetRequest = user.getReceivingMapRequest();
+
+        if (receivingMeetRequest.equals("false")) {
+            mRequestActivity.SetupAsInitiator();
+        } else {
+            mRequestActivity.SetupAsReceiver();
         }
     }
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
-    }
-
-    public ValueEventListener getMeetRequestRefListener() {
-        return mMeetRequestRefListener;
     }
 }

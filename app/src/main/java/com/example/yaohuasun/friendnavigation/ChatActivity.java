@@ -186,8 +186,9 @@ public class ChatActivity extends AppCompatActivity {
         mMessageList.setAdapter(mMessageListAdapter);
     }
 
-    public void NavigateToRequestActivity() {
+    public void NavigateToRequestActivity(boolean isInitator) {
         Intent intent = new Intent(ChatActivity.this, RequestActivity.class);
+        intent.putExtra("isInitiator", isInitator);
         startActivity(intent);
     }
 

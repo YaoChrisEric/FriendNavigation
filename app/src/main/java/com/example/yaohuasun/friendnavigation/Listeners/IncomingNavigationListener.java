@@ -41,7 +41,7 @@ public class IncomingNavigationListener implements ValueEventListener {
 
         mActivity.setCurrentMeetRequest(mCurrentMeetRequest);
 
-        mActivity.NavigateToRequestActivity();
+        mActivity.NavigateToRequestActivity(false);
     }
 
     @Override

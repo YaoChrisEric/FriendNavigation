@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.yaohuasun.friendnavigation.Listeners.RequestActivity.NavigateToChatActivity;
+import com.example.yaohuasun.friendnavigation.Listeners.RequestActivity.MeetRequestRefListener;
 import com.example.yaohuasun.friendnavigation.Listeners.RequestActivity.UserRefListener;
 import com.example.yaohuasun.friendnavigation.Models.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +33,8 @@ public class RequestActivity extends AppCompatActivity {
 
     private View mContentView;
 
+    private boolean mIsInitator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +54,8 @@ public class RequestActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
 
+        mIsInitator = intent.getBooleanExtra("isInitiator", false);
+
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mUserRef = mFirebaseDatabase.getReference().child("Users");
         mAcceptBtn = (Button)findViewById(R.id.accept_button);
@@ -61,46 +65,45 @@ public class RequestActivity extends AppCompatActivity {
 
         mCurrentUserEmail = mFirebaseAuth.getCurrentUser().getEmail().trim();
 
-        //the basic chat friend still should be put into shared preferences in chat activity
-
-        userRefListener = new UserRefListener(mFirebaseDatabase, this, mAcceptBtn, mCurrentUserEmail);
         mUserRef.orderByChild("emailAddr").equalTo(mCurrentUserEmail).addListenerForSingleValueEvent(
-                userRefListener
+                new UserRefListener(mFirebaseDatabase, this, mCurrentUserEmail)
         );
 
         mHanghoutBtn = (Button)findViewById(R.id.hangout_button);
-        mHanghoutBtn.setOnClickListener(new NavigateToChatActivity(this));
+        mHanghoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToChatActivity();
+            }
+        });
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // TODO: do the cleanup in onPause and onDestroy in every activity
-        if (null!= mMeetRequestRefListener)
-        {
-            mMeetRequestReference.removeEventListener(userRefListener.getMeetRequestRefListener());
-            mMeetRequestRefListener = null;
-        }
+        removeMeetRequestListener();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null!= mMeetRequestRefListener)
-        {
-            mMeetRequestReference.removeEventListener(userRefListener.getMeetRequestRefListener());
-            mMeetRequestRefListener = null;
-        }
+        removeMeetRequestListener();
     }
 
-    public void navigateToMapActivity(String isInitiator) {
-        Intent intent = new Intent(RequestActivity.this,MapsActivity.class);
-        // these extra info could be found in maps activity
-        // and start the MapsActivity
-        intent.putExtra("ChatId", mChatId);
-        intent.putExtra("isInitiator", isInitiator);
-        startActivity(intent);
-        finish();
+    public void SetupAsInitiator() {
+        mAcceptBtn.setVisibility(View.INVISIBLE);
+        mMeetRequestRefListener = mMeetRequestReference.addValueEventListener(new MeetRequestRefListener(this));
+    }
+
+    public void SetupAsReceiver() {
+        mAcceptBtn.setVisibility(View.VISIBLE);
+        mAcceptBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetRequest();
+                navigateToMapActivity();
+            }
+        });
     }
 
     public void updateMeetRequestReference(UserModel user, DatabaseReference meetRequestReference, String basicChatFriend, String chatId) {
@@ -109,15 +112,39 @@ public class RequestActivity extends AppCompatActivity {
         mChatId = chatId;
     }
 
-    public void navigateToChatActivity(Intent intent) {
+    public void navigateToChatActivity() {
+        resetRequest();
+        startActivity(new Intent(this, ChatActivity.class));
+        finish();
+    }
+
+    public void navigateToMapActivity() {
+        if (!mIsInitator) {
+            mMeetRequestReference.child("responderState").setValue("true");
+        }
+
+        Intent intent = new Intent(RequestActivity.this,MapsActivity.class);
+        intent.putExtra("ChatId", mChatId);
+        intent.putExtra("isInitiator", mIsInitator);
+        startActivity(intent);
+        finish();
+    }
+
+    private void resetRequest() {
         mMeetRequestReference.child("initiatorState").setValue("false");
         mMeetRequestReference.child("initiatorEmailAddr").setValue("");
         mMeetRequestReference.child("responderEmailAddr").setValue("");
         mMeetRequestReference.child("responderState").setValue("false");
 
         mUserRef.child(FNUtil.encodeEmail(mBasicChatFriend)).child("receivingMapRequest").setValue("false");
+    }
 
-        startActivity(intent);
-        finish();
+    private void removeMeetRequestListener() {
+        if (mMeetRequestRefListener == null) {
+            return;
+        }
+
+        mMeetRequestReference.removeEventListener(mMeetRequestRefListener);
+        mMeetRequestRefListener = null;
     }
 }
