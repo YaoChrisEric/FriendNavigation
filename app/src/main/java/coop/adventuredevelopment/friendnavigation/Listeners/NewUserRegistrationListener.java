@@ -43,7 +43,6 @@ public class NewUserRegistrationListener implements OnCompleteListener<AuthResul
         if(task.isSuccessful()){
             DatabaseReference mNewUser = mDatabaseRef.child("Users").child(FNUtil.encodeEmail(mUserEmailString));
             mNewUser.child("emailAddr").setValue(mUserEmailString);
-            mNewUser.child("passwordForLogin").setValue(mUserPasswordString);
             mNewUser.child("receivingMapRequest").setValue("false");
             mNewUser.child("currentChatFriend").setValue("");
 
