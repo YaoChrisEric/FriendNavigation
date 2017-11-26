@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:199643945377:android:4cfc8f173950325c",
         "android_client_info": {
-          "package_name": "com.example.yaohuasun.friendnavigation"
+          "package_name": "coop.adventuredevelopment.friendnavigation"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "199643945377-d98h0gpkf4odcj32fqm365l95um48jkp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.yaohuasun.friendnavigation",
+            "package_name": "coop.adventuredevelopment.friendnavigation",
             "certificate_hash": "72d9e035e7a9d416e132cd2580744b0df141f21a"
           }
         },
