@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "623221609547",
+    "firebase_url": "https://friendnavigation-prod.firebaseio.com",
+    "project_id": "friendnavigation-prod",
+    "storage_bucket": "friendnavigation-prod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623221609547:android:477bce22e8ebff53",
+        "android_client_info": {
+          "package_name": "coop.adventuredevelopment.friendnavigation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "623221609547-q94d8p6jcsmmmeje8ae3761u18kq0tv5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "coop.adventuredevelopment.friendnavigation",
+            "certificate_hash": "72d9e035e7a9d416e132cd2580744b0df141f21a"
+          }
+        },
+        {
+          "client_id": "623221609547-i17encqbb3cfd20hha6ush46k39ojrs1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWchaRBIfa-08ylR0RWUvuInG2DZ9__Dk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "623221609547-i17encqbb3cfd20hha6ush46k39ojrs1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
