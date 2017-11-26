@@ -24,6 +24,7 @@ public class MeetRequestRefListener implements ValueEventListener {
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         if(dataSnapshot.exists()) {
+
             Log.i("position09191", "in reqActivity, dataSnapShot is " + dataSnapshot.toString());
 
             mCurrentMeetRequest = dataSnapshot.getValue(MeetRequestModel.class);
@@ -31,13 +32,12 @@ public class MeetRequestRefListener implements ValueEventListener {
             String initiatorState = mCurrentMeetRequest.getInitiatorState();
             String responderEmail = mCurrentMeetRequest.getResponderEmailaddr();
             String responderState = mCurrentMeetRequest.getResponderState();
-            if (responderState.equals("true")){
-                if (!initiatorState.equals("true")){
-                    Log.i("DEAD11", "unExpected situation,wrong, initiatorEmail is" + initiatorEmail + "initiatorState is"+initiatorState);
-                }
 
-                mRequestActivity.navigateToMapActivity("true");
+            if (!responderState.equals("true")) {
+                return;
             }
+
+            mRequestActivity.navigateToMapActivity();
         }
     }
 

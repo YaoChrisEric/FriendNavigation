@@ -52,7 +52,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ValueEventListener mMeetLocationsRefListener;
     private DatabaseReference mMeetLocationsReference;
     private String mChatId;
-    private String mIsCallingActivityInitiator;
+    private boolean mIsCallingActivityInitiator;
 
     private FirebaseDatabase mFirebaseDatabase;
 
@@ -67,16 +67,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         Intent intent = this.getIntent();
 
-        // it is ok to use extras here because the request activity is a transient acivity (cannot go back to it)
-        // TODO: implement back arrow to the chat activity.
         mChatId = intent.getStringExtra("ChatId");
-        mIsCallingActivityInitiator = intent.getStringExtra("isInitiator");
+        mIsCallingActivityInitiator = intent.getBooleanExtra("isInitiator", false);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -178,7 +175,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // initiatiorLatitude, initiatorLongitude or
             // responderLatitude, responderLongitude
 
-            if(mIsCallingActivityInitiator.equals("true")){
+            if(mIsCallingActivityInitiator){
                 mMeetLocationsReference.child("InitiatorLatitude").setValue(Double.toString(latitude));
                 mMeetLocationsReference.child("InitiatorLongitude").setValue(Double.toString(longitude));
             }
@@ -210,7 +207,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     // before we return to parent task, we will need to set the fb reference for the
                     // responder listener to trigger
                     mEndNavigation = true;
-                    if(mIsCallingActivityInitiator.equals("true")){
+                    if(mIsCallingActivityInitiator){
                         mMeetLocationsReference.child("InitiatorLatitude").setValue("500");
                         mMeetLocationsReference.child("InitiatorLongitude").setValue("500");
                     }

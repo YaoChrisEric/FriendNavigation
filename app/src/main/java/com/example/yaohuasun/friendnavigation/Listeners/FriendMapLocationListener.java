@@ -24,7 +24,7 @@ public class FriendMapLocationListener implements ValueEventListener{
     //private Marker currentLocationmMarker;
     private Marker otherPartyLocationMarker;
     private MeetLocationModel mCurrentFriendsLocation;
-    private String mIsCallingActivityInitiator;
+    private boolean mIsCallingActivityInitiator;
     private GoogleMap mMap;
     private MapsActivity mMapsActivity;
     private FirebaseDatabase mFirebaseDatabase;
@@ -34,7 +34,7 @@ public class FriendMapLocationListener implements ValueEventListener{
     public FriendMapLocationListener(
             Marker friendLocationMarker,
             MeetLocationModel currentFriendsLocation,
-            String isCallingActivityInitiator,
+            boolean isCallingActivityInitiator,
             GoogleMap map,
             MapsActivity mapsActivity,
             FirebaseDatabase firebaseDatabase,
@@ -73,7 +73,7 @@ public class FriendMapLocationListener implements ValueEventListener{
             LatLng latLng;
             double otherPartyLatitude;
             double otherPartyLongitude;
-            if (mIsCallingActivityInitiator.equals("true")){
+            if (mIsCallingActivityInitiator){
 
                 if(responderLatitude.equals("500"))
                 {
