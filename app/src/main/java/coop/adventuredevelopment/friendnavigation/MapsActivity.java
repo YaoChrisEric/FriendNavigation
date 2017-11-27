@@ -83,6 +83,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mEndNavigation = false;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        endNavigationAndMarkAsEnded();
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -199,39 +205,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mGoogleApiClient.connect();
     }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            switch (item.getItemId()){
-                // respond to up/home button to go back to parent activity
-                case android.R.id.home:
-                    // before we return to parent task, we will need to set the fb reference for the
-                    // responder listener to trigger
-                    mEndNavigation = true;
-                    if(mIsCallingActivityInitiator){
-                        mMeetLocationsReference.child("InitiatorLatitude").setValue("500");
-                        mMeetLocationsReference.child("InitiatorLongitude").setValue("500");
-                    }
-                    else
-                    {
-                        mMeetLocationsReference.child("ResponderLatitude").setValue("500");
-                        mMeetLocationsReference.child("ResponderLongitude").setValue("500");
-                    }
-                    endFriendNavigationAndNavigateToChatActivity();
-                    return true;
-            }
-
-            return super.onOptionsItemSelected(item);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            // respond to up/home button to go back to parent activity
+            case android.R.id.home:
+                endNavigationAndMarkAsEnded();
+                return true;
         }
 
-        public void endFriendNavigationAndNavigateToChatActivity() {
-            mMeetRequestReference = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId).child("meetRequest");
-            mMeetRequestReference.child("initiatorState").setValue("false");
-            mMeetRequestReference.child("initiatorEmailAddr").setValue("");
-            mMeetRequestReference.child("responderEmailAddr").setValue("");
-            mMeetRequestReference.child("responderState").setValue("false");
+        return super.onOptionsItemSelected(item);
+    }
 
-            NavUtils.navigateUpFromSameTask(this);
+    public void endFriendNavigationAndNavigateToChatActivity() {
+        mMeetRequestReference = mFirebaseDatabase.getReference().child("BasicChat").child(mChatId).child("meetRequest");
+        mMeetRequestReference.child("initiatorState").setValue("false");
+        mMeetRequestReference.child("initiatorEmailAddr").setValue("");
+        mMeetRequestReference.child("responderEmailAddr").setValue("");
+        mMeetRequestReference.child("responderState").setValue("false");
+
+        NavUtils.navigateUpFromSameTask(this);
+    }
+
+    private void endNavigationAndMarkAsEnded() {
+        mEndNavigation = true;
+        if(mIsCallingActivityInitiator){
+            mMeetLocationsReference.child("InitiatorLatitude").setValue("500");
+            mMeetLocationsReference.child("InitiatorLongitude").setValue("500");
         }
+        else
+        {
+            mMeetLocationsReference.child("ResponderLatitude").setValue("500");
+            mMeetLocationsReference.child("ResponderLongitude").setValue("500");
+        }
+        endFriendNavigationAndNavigateToChatActivity();
+    }
 
     // TODO: in onDestroy or onStop, set mReceivingMeetRequest = user.getReceivingMapRequest(); to false
 }
