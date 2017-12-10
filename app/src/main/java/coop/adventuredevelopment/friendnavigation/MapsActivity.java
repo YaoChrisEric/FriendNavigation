@@ -235,9 +235,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMeetLocationsReference.child("ResponderLongitude").setValue(Double.toString(longitude));
             }
 
-            if(null != mGoogleApiClient){
-                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
-            }
+            // we need continuous location updates
+
         }
 
     }
