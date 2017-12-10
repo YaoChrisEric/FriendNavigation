@@ -38,5 +38,5 @@
         android:layout_marginBottom="14dp"
         android:ems="10"
         android:hint="type in password "
-        android:inputType="textPersonName" />
+        android:inputType="textPassword" />
 </RelativeLayout>
