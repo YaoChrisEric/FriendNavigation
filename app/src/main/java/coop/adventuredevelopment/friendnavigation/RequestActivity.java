@@ -114,8 +114,7 @@ public class RequestActivity extends AppCompatActivity {
 
     public void navigateToChatActivity() {
         resetRequest();
-        startActivity(new Intent(this, ChatActivity.class));
-        finish();
+        super.onBackPressed();
     }
 
     public void navigateToMapActivity() {
