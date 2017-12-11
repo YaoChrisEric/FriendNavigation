@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.List;
+
+import coop.adventuredevelopment.friendnavigation.Listeners.TextSearchUserListener;
 import coop.adventuredevelopment.friendnavigation.Utils.FNUtil;
 import coop.adventuredevelopment.friendnavigation.Models.FriendModel;
 import coop.adventuredevelopment.friendnavigation.Models.UserModel;
@@ -40,7 +46,11 @@ public class FNFriendListActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseUserRef;
     private DatabaseReference mUsers;
     private DatabaseReference mFriendMap;
+    private AutoCompleteTextView mUserInputEmailEdit;
 
+    private static final String[] COUNTRIES = new String[] {
+            "Belgium", "France", "Italy", "Germany", "Spain"
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +64,12 @@ public class FNFriendListActivity extends AppCompatActivity {
 
         mUsers = mFirebaseDatabase.getReference().child("Users");
         mFriendMap = mFirebaseDatabase.getReference().child("FriendMap");
+
+        mUserInputEmailEdit = (AutoCompleteTextView) findViewById(R.id.searchFriendEdit);
+        mUserInputEmailEdit.addTextChangedListener(
+                new TextSearchUserListener(this, mUsers)
+        );
+        mUserInputEmailEdit.setThreshold(1);
 
         displayUserList();
     }
@@ -107,9 +123,6 @@ public class FNFriendListActivity extends AppCompatActivity {
     }
 
     public void searchAndAddNewFriend(View view){
-
-        EditText mUserInputEmailEdit = (EditText)findViewById(R.id.searchFriendEdit);
-
         final String mUserInputEmailString = mUserInputEmailEdit.getText().toString().trim();
 
         mUsers.orderByChild("emailAddr").equalTo(mUserInputEmailString).addListenerForSingleValueEvent(
@@ -164,6 +177,13 @@ public class FNFriendListActivity extends AppCompatActivity {
                 });
             }
         };
+    }
+
+    public void setSearchUserAdapter(List<String> userList){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, userList);
+
+        mUserInputEmailEdit.setAdapter(adapter);
     }
 }
 
