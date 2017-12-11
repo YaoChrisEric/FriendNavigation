@@ -23,14 +23,15 @@
             android:orientation="horizontal"
             >
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/searchFriendEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="search friend by email "
-                android:inputType="textEmailAddress"
                 android:paddingLeft="15dp"
+                android:inputType="textNoSuggestions"
+                android:completionThreshold="1"
                 android:paddingTop="9dp" />
 
             <ImageButton
@@ -42,7 +43,6 @@
                 android:background="@android:drawable/ic_menu_send" />
 
         </LinearLayout>
-
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
