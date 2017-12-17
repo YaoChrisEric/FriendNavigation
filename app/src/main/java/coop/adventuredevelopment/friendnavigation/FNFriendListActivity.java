@@ -96,6 +96,12 @@ public class FNFriendListActivity extends AppCompatActivity {
             AuthUI.getInstance().signOut(this);
             startActivity(new Intent(FNFriendListActivity.this, MainActivity.class));
         }
+        else if(id == R.id.version)
+        {
+            // TODO: the app version should be part of the profile activity when clicking the "about" menu item in it
+            // will need to add it when profile activity is implemented; for now, use a simple menu item with toast
+            Toast.makeText(this,"Current App Version : " + BuildConfig.VERSION_NAME, Toast.LENGTH_LONG).show();
+        }
         return true;
     }
 
