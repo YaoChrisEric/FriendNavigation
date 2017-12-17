@@ -46,11 +46,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private Location lastlocation;
-    private LocationRequest locationRequest;
+    private LocationRequest mLocationRequest;
     private Marker currentLocationmMarker;
     private Marker otherPartyLocationMarker;
-    double latitude,longitude;
 
     private ValueEventListener mMeetLocationsRefListener;
     private DatabaseReference mMeetLocationsReference;
@@ -167,16 +165,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(100);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(100);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED)
         {
             Log.i("Yao1019","location fine permission granted");
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
         else
         {
@@ -196,49 +193,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location) {
-        // only update location before back button is clicked
-        if (!mEndNavigation)
-        {
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-            lastlocation = location;
-            if(currentLocationmMarker != null)
-            {
-                currentLocationmMarker.remove();
 
-            }
-            Log.i("Yao1015","in onLocationChanged lat = "+latitude);
-            LatLng latLng = new LatLng(location.getLatitude() , location.getLongitude());
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title("Current Location");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-            currentLocationmMarker = mMap.addMarker(markerOptions);
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            // TODO: fix the camera problem
-            // TODO: save marker options to global, just update its position everytime
-
-            //mMap.animateCamera(CameraUpdateFactory.zoomBy(5));
-
-            //next step, save the latlang into the realtime db, and display both friends addr there
-
-            // initiatiorLatitude, initiatorLongitude or
-            // responderLatitude, responderLongitude
-
-            if(mIsCallingActivityInitiator){
-                mMeetLocationsReference.child("InitiatorLatitude").setValue(Double.toString(latitude));
-                mMeetLocationsReference.child("InitiatorLongitude").setValue(Double.toString(longitude));
-            }
-            else
-            {
-                mMeetLocationsReference.child("ResponderLatitude").setValue(Double.toString(latitude));
-                mMeetLocationsReference.child("ResponderLongitude").setValue(Double.toString(longitude));
-            }
-
-            // we need continuous location updates
-
+        if (mEndNavigation) {
+            return;
         }
 
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        if(currentLocationmMarker != null)
+        {
+            currentLocationmMarker.remove();
+
+        }
+        Log.i("Yao1015","in onLocationChanged lat = "+latitude);
+        LatLng latLng = new LatLng(latitude , longitude);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Location");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        currentLocationmMarker = mMap.addMarker(markerOptions);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+        if(mIsCallingActivityInitiator){
+            mMeetLocationsReference.child("InitiatorLatitude").setValue(Double.toString(latitude));
+            mMeetLocationsReference.child("InitiatorLongitude").setValue(Double.toString(longitude));
+        }
+        else
+        {
+            mMeetLocationsReference.child("ResponderLatitude").setValue(Double.toString(latitude));
+            mMeetLocationsReference.child("ResponderLongitude").setValue(Double.toString(longitude));
+        }
     }
 
 
