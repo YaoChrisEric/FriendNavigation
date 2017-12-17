@@ -220,9 +220,9 @@ public class ChatActivity extends AppCompatActivity {
                 senderText.setText(model.getSenderEmail());
                 timeText.setText(model.getTimestamp());
 
-                String senderEmail = model.getSenderEmail();
+                String senderEmail = model.getSenderEmail().trim();
 
-                if (mCurrentUserEmail == senderEmail) {
+                if (mCurrentUserEmail.equals(senderEmail)) {
                     // move message to the right
                     messageLine.setGravity(Gravity.RIGHT);
                 } else {
