@@ -47,8 +47,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private Marker currentLocationmMarker;
-    private Marker otherPartyLocationMarker;
+    private Marker mCurrentLocationmMarker;
+    private Marker mOtherPartyLocationMarker;
 
     private ValueEventListener mMeetLocationsRefListener;
     private DatabaseReference mMeetLocationsReference;
@@ -144,10 +144,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMeetLocationsReference.addValueEventListener( new FriendMapLocationListener(otherPartyLocationMarker,
-                mCurrentFriendsLocation,
+        mMeetLocationsReference.addValueEventListener( new FriendMapLocationListener(
                 mIsCallingActivityInitiator,
-                mMap,
                 this,
                 mFirebaseDatabase,
                 mChatId
@@ -201,19 +199,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
 
-        if(currentLocationmMarker != null)
-        {
-            currentLocationmMarker.remove();
-
-        }
-        Log.i("Yao1015","in onLocationChanged lat = "+latitude);
-        LatLng latLng = new LatLng(latitude , longitude);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Location");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        currentLocationmMarker = mMap.addMarker(markerOptions);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        updateCurrentUserMapMarker(new LatLng(latitude, longitude));
 
         if(mIsCallingActivityInitiator){
             mMeetLocationsReference.child("InitiatorLatitude").setValue(Double.toString(latitude));
@@ -268,6 +254,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         NavUtils.navigateUpFromSameTask(this);
     }
 
+    public void updateOtherUserLocation(LatLng location) {
+        if (mOtherPartyLocationMarker == null) {
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(location);
+            markerOptions.title("Other Party Location");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            mOtherPartyLocationMarker = mMap.addMarker(markerOptions);
+            markerOptions.position(location);
+        }
+        else {
+            mOtherPartyLocationMarker.setPosition(location);
+        }
+    }
+
     private void endNavigationAndMarkAsEnded() {
         mEndNavigation = true;
         if(mIsCallingActivityInitiator){
@@ -282,5 +282,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         endFriendNavigationAndNavigateToChatActivity();
     }
 
-    // TODO: in onDestroy or onStop, set mReceivingMeetRequest = user.getReceivingMapRequest(); to false
+    private void updateCurrentUserMapMarker(LatLng location) {
+        if (mCurrentLocationmMarker == null) {
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(location);
+            markerOptions.title("Current Location");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            mCurrentLocationmMarker = mMap.addMarker(markerOptions);
+            markerOptions.position(location);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        }
+        else {
+            mCurrentLocationmMarker.setPosition(location);
+        }
+    }
 }
