@@ -48,9 +48,9 @@ public class ProposeNavigationListener implements ValueEventListener {
 
         if (mReceivingMeetRequest.equals("false")) {
 
-            mMeetRequestMessageRef.child("initiatorState").setValue("true");
             mMeetRequestMessageRef.child("initiatorEmailAddr").setValue(mCurrentUserEmail);
             mMeetRequestMessageRef.child("responderEmailAddr").setValue(currentChatFriend);
+            mMeetRequestMessageRef.child("initiatorState").setValue("true");
 
             mUserRef.child(FNUtil.encodeEmail(currentChatFriend)).child("receivingMapRequest").setValue("true");
         }

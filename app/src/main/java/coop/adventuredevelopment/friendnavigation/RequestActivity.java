@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import coop.adventuredevelopment.friendnavigation.Listeners.RequestActivity.DeclineEventListener;
 import coop.adventuredevelopment.friendnavigation.Listeners.RequestActivity.MeetRequestRefListener;
 import coop.adventuredevelopment.friendnavigation.Listeners.RequestActivity.UserRefListener;
 import coop.adventuredevelopment.friendnavigation.Models.UserModel;
@@ -73,9 +74,10 @@ public class RequestActivity extends AppCompatActivity {
         mHanghoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navigateToChatActivity();
+                navigateToFriendListActivity();
             }
         });
+
     }
 
     @Override
@@ -100,10 +102,15 @@ public class RequestActivity extends AppCompatActivity {
         mAcceptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetRequest();
                 navigateToMapActivity();
             }
         });
+    }
+
+    public void SetupDeclineReceiver() {
+        mMeetRequestReference.addValueEventListener(
+                new DeclineEventListener(this, mCurrentUserEmail)
+        );
     }
 
     public void updateMeetRequestReference(UserModel user, DatabaseReference meetRequestReference, String basicChatFriend, String chatId) {
@@ -112,9 +119,11 @@ public class RequestActivity extends AppCompatActivity {
         mChatId = chatId;
     }
 
-    public void navigateToChatActivity() {
+    public void navigateToFriendListActivity() {
         resetRequest();
-        super.onBackPressed();
+        Intent intent = new Intent(RequestActivity.this, FNFriendListActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public void navigateToMapActivity() {
@@ -130,11 +139,10 @@ public class RequestActivity extends AppCompatActivity {
     }
 
     private void resetRequest() {
-        mMeetRequestReference.child("initiatorState").setValue("false");
         mMeetRequestReference.child("initiatorEmailAddr").setValue("");
         mMeetRequestReference.child("responderEmailAddr").setValue("");
+        mMeetRequestReference.child("initiatorState").setValue("false");
         mMeetRequestReference.child("responderState").setValue("false");
-
         mUserRef.child(FNUtil.encodeEmail(mBasicChatFriend)).child("receivingMapRequest").setValue("false");
     }
 

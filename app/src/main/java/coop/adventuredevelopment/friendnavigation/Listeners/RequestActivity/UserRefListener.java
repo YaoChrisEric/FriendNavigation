@@ -36,15 +36,12 @@ public class UserRefListener implements ValueEventListener{
             return;
         }
 
-        Log.i("position1010", "in OnDataChange, dataSnapShot Value is" + dataSnapshot.getValue().toString());
-
         UserModel user = dataSnapshot.child(FNUtil.encodeEmail(mCurrentUserEmail)).getValue(UserModel.class);
         if (user == null) {
             return;
         }
 
         String basicChatFriend = user.getCurrentChatFriend();
-        Log.i("position1002", "basicChatFriend is" + basicChatFriend);
         String chatId = FNUtil.generateIDWithTwoEmails(mCurrentUserEmail, basicChatFriend);
         DatabaseReference basicChatRef = mFirebaseDatabase.getReference().child("BasicChat").child(chatId);
         DatabaseReference meetRequestReference = basicChatRef.child("meetRequest");
@@ -57,6 +54,8 @@ public class UserRefListener implements ValueEventListener{
         } else {
             mRequestActivity.SetupAsReceiver();
         }
+
+        mRequestActivity.SetupDeclineReceiver();
     }
 
     @Override
