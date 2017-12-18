@@ -49,23 +49,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationRequest mLocationRequest;
     private Marker mCurrentLocationmMarker;
     private Marker mOtherPartyLocationMarker;
-
-    private ValueEventListener mMeetLocationsRefListener;
     private DatabaseReference mMeetLocationsReference;
     private String mChatId;
     private boolean mIsCallingActivityInitiator;
-
     private FirebaseDatabase mFirebaseDatabase;
-
-    private MeetLocationModel mCurrentFriendsLocation;
-
     private boolean mEndNavigation;
     private DatabaseReference mMeetRequestReference;
 
     public static final int REQUEST_LOCATION_CODE = 101;
 
 
-    // first task, display current location on map
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,9 +139,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMeetLocationsReference.addValueEventListener( new FriendMapLocationListener(
                 mIsCallingActivityInitiator,
-                this,
-                mFirebaseDatabase,
-                mChatId
+                this
         ));
 
         // Add a marker in Sydney and move the camera
@@ -257,11 +248,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void updateOtherUserLocation(LatLng location) {
         if (mOtherPartyLocationMarker == null) {
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(location);
             markerOptions.title("Other Party Location");
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-            mOtherPartyLocationMarker = mMap.addMarker(markerOptions);
             markerOptions.position(location);
+            mOtherPartyLocationMarker = mMap.addMarker(markerOptions);
         }
         else {
             mOtherPartyLocationMarker.setPosition(location);
@@ -285,11 +275,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void updateCurrentUserMapMarker(LatLng location) {
         if (mCurrentLocationmMarker == null) {
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(location);
             markerOptions.title("Current Location");
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-            mCurrentLocationmMarker = mMap.addMarker(markerOptions);
             markerOptions.position(location);
+            mCurrentLocationmMarker = mMap.addMarker(markerOptions);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
         }
         else {

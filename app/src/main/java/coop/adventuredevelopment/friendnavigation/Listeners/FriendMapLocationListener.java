@@ -21,23 +21,16 @@ import com.google.firebase.database.ValueEventListener;
  */
 
 public class FriendMapLocationListener implements ValueEventListener{
-
     private boolean mIsCallingActivityInitiator;
 
     private MapsActivity mMapsActivity;
-    private FirebaseDatabase mFirebaseDatabase;
-    private String mCurrentChatId;
 
     public FriendMapLocationListener(
             boolean isCallingActivityInitiator,
-            MapsActivity mapsActivity,
-            FirebaseDatabase firebaseDatabase,
-            String chatId
+            MapsActivity mapsActivity
     ){
         mIsCallingActivityInitiator = isCallingActivityInitiator;
         mMapsActivity = mapsActivity;
-        mFirebaseDatabase = firebaseDatabase;
-        mCurrentChatId = chatId;
     }
 
     @Override
@@ -48,9 +41,8 @@ public class FriendMapLocationListener implements ValueEventListener{
 
         MeetLocationModel currentFriendsLocation = dataSnapshot.getValue(MeetLocationModel.class);
 
-        LatLng latLng = CreateOtherPartyLocationPoint(currentFriendsLocation);
-
         if(!currentFriendsLocation.getResponderLatitude().equals("500")) {
+            LatLng latLng = CreateOtherPartyLocationPoint(currentFriendsLocation);
             mMapsActivity.updateOtherUserLocation(latLng);
         }
         else {
