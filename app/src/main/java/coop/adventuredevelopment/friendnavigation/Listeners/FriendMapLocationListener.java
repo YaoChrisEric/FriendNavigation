@@ -21,29 +21,20 @@ import com.google.firebase.database.ValueEventListener;
  */
 
 public class FriendMapLocationListener implements ValueEventListener{
-    //private Marker currentLocationmMarker;
-    private Marker otherPartyLocationMarker;
-    private MeetLocationModel mCurrentFriendsLocation;
+
     private boolean mIsCallingActivityInitiator;
-    private GoogleMap mMap;
+
     private MapsActivity mMapsActivity;
     private FirebaseDatabase mFirebaseDatabase;
     private String mCurrentChatId;
-    private DatabaseReference mMeetRequestReference;
 
     public FriendMapLocationListener(
-            Marker friendLocationMarker,
-            MeetLocationModel currentFriendsLocation,
             boolean isCallingActivityInitiator,
-            GoogleMap map,
             MapsActivity mapsActivity,
             FirebaseDatabase firebaseDatabase,
             String chatId
     ){
-        otherPartyLocationMarker = friendLocationMarker;
-        mCurrentFriendsLocation = currentFriendsLocation;
         mIsCallingActivityInitiator = isCallingActivityInitiator;
-        mMap = map;
         mMapsActivity = mapsActivity;
         mFirebaseDatabase = firebaseDatabase;
         mCurrentChatId = chatId;
@@ -51,72 +42,20 @@ public class FriendMapLocationListener implements ValueEventListener{
 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-        if(dataSnapshot.exists()){
-            Log.i("position1023001", "in MapsActivity, dataSnapShot is " + dataSnapshot.toString());
-            // we had some problem retrieving the whole MeetRequestModel, so we use another method
-            // to get the mCurrentMeetRequest instead
+        if(!dataSnapshot.exists()){
+            return;
+        }
 
-            boolean shouldEndNavigation = false;
-            if(otherPartyLocationMarker != null)
-            {
-                otherPartyLocationMarker.remove();
-            }
+        MeetLocationModel currentFriendsLocation = dataSnapshot.getValue(MeetLocationModel.class);
 
-            mCurrentFriendsLocation = dataSnapshot.getValue(MeetLocationModel.class);
-            String initiatorLatitude = mCurrentFriendsLocation.getInitiatorLatitude();
-            String initiatorLongitude = mCurrentFriendsLocation.getInitiatorLongitude();
-            String responderLatitude = mCurrentFriendsLocation.getResponderLatitude();
-            String responderLongitude = mCurrentFriendsLocation.getResponderLongitude();
-            Log.i("position1023002", "in MapsActivity, initiatorLatitude is "+ initiatorLatitude+", initiatorLongitude is "+
-                    initiatorLongitude+ ", responderLongitude is "+responderLongitude + ",responder latitude is "+responderLatitude);
+        LatLng latLng = CreateOtherPartyLocationPoint(currentFriendsLocation);
 
-            LatLng latLng;
-            double otherPartyLatitude;
-            double otherPartyLongitude;
-            if (mIsCallingActivityInitiator){
-
-                if(responderLatitude.equals("500"))
-                {
-                    //TODO:ensure responder longitude is also 500
-
-                    // set end nav flag to be true
-                    shouldEndNavigation = true;
-                }
-
-                // we are initiator, only need to create a marker for responder
-                otherPartyLatitude = Double.parseDouble(responderLatitude);
-                otherPartyLongitude = Double.parseDouble(responderLongitude);
-                latLng = new LatLng(otherPartyLatitude,otherPartyLongitude);
-            }
-            else{
-                if(initiatorLatitude.equals("500"))
-                {
-                    //TODO:ensure initiator longitude is also 500
-                    // set end nav flag to be true
-                    shouldEndNavigation = true;
-                }
-
-                // we are responder, only need to create a marker for initiator
-                otherPartyLatitude = Double.parseDouble(initiatorLatitude);
-                otherPartyLongitude = Double.parseDouble(initiatorLongitude);
-                latLng = new LatLng(otherPartyLatitude,otherPartyLongitude);
-            }
-            if(!shouldEndNavigation) {
-
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.title("other Party Location");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-
-
-
-            otherPartyLocationMarker = mMap.addMarker(markerOptions);
-            //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            }
-            else {
-                // we end the navigation and go to parent activity
-                mMapsActivity.endFriendNavigationAndNavigateToChatActivity();
-            }
+        if(!currentFriendsLocation.getResponderLatitude().equals("500")) {
+            mMapsActivity.updateOtherUserLocation(latLng);
+        }
+        else {
+            // we end the navigation and go to parent activity
+            mMapsActivity.endFriendNavigationAndNavigateToChatActivity();
         }
     }
 
@@ -125,4 +64,17 @@ public class FriendMapLocationListener implements ValueEventListener{
 
     }
 
+    private LatLng CreateOtherPartyLocationPoint(MeetLocationModel locationModel) {
+        if (mIsCallingActivityInitiator){
+            double otherPartyLatitude = Double.parseDouble(locationModel.getResponderLatitude());
+            double otherPartyLongitude = Double.parseDouble(locationModel.getResponderLongitude());
+            return new LatLng(otherPartyLatitude,otherPartyLongitude);
+        }
+        else{
+            // we are responder, only need to create a marker for initiator
+            double otherPartyLatitude = Double.parseDouble(locationModel.getInitiatorLatitude());
+            double otherPartyLongitude = Double.parseDouble(locationModel.getInitiatorLongitude());
+            return new LatLng(otherPartyLatitude,otherPartyLongitude);
+        }
+    }
 }
