@@ -47,10 +47,7 @@ public class FNFriendListActivity extends AppCompatActivity {
     private DatabaseReference mUsers;
     private DatabaseReference mFriendMap;
     private AutoCompleteTextView mUserInputEmailEdit;
-
-    private static final String[] COUNTRIES = new String[] {
-            "Belgium", "France", "Italy", "Germany", "Spain"
-    };
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
